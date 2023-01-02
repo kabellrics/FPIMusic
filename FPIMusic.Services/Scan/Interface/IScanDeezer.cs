@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FPIMusic.Services.Interface
+namespace FPIMusic.Services.Scan.Interface
 {
     public interface IScanDeezer
     {

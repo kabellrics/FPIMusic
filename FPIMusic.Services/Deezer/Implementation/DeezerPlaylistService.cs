@@ -1,23 +1,22 @@
 ﻿using FPIMusic.DataAccess;
-using FPIMusic.Services.Interface;
+using FPIMusic.Services.Deezer.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FPIMusic.Services.Implémentation
+namespace FPIMusic.Services.Deezer.Implementation
 {
-    public class ScanDeezer : IScanDeezer
+    public class DeezerPlaylistService : IDeezerPlaylistService
     {
         private IRepoUnit context;
         private ISettingService settings;
 
-        public ScanDeezer(IRepoUnit context, ISettingService settings)
+        public DeezerPlaylistService(IRepoUnit context, ISettingService settings)
         {
-            this.settings = settings;
             this.context = context;
+            this.settings = settings;
         }
-        public async void Scan() { }
     }
 }

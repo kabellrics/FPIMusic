@@ -1,23 +1,22 @@
 ﻿using FPIMusic.DataAccess;
-using FPIMusic.Services.Interface;
+using FPIMusic.Services.Mediatheque.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FPIMusic.Services.Implémentation
+namespace FPIMusic.Services.Mediatheque.Implementation
 {
-    public class ScanCompilation : IScanCompilation
+    public class MediaSongService : IMediaSongService
     {
         private IRepoUnit context;
         private ISettingService settings;
 
-        public ScanCompilation(IRepoUnit context, ISettingService settings) 
+        public MediaSongService(IRepoUnit context, ISettingService settings)
         {
-            this.settings = settings;
             this.context = context;
+            this.settings = settings;
         }
-        public async void Scan() { }
     }
 }

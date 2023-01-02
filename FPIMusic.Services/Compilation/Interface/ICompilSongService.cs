@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FPIMusic.Services.Interface
+namespace FPIMusic.Services.Compilation.Interface
 {
-    public interface IScanMediatheque
+    public interface ICompilSongService
     {
-        void Scan();
     }
 }

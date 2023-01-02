@@ -1,6 +1,6 @@
 ﻿using FPIMusic.DataAccess;
-using FPIMusic.Services.Implémentation;
-using FPIMusic.Services.Interface;
+using FPIMusic.Services.Scan.Implémentation;
+using FPIMusic.Services.Scan.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

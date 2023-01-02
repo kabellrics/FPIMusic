@@ -1,13 +1,13 @@
 ﻿using FPIMusic.DataAccess;
 using FPIMusic.Models.Mediatheque;
-using FPIMusic.Services.Interface;
+using FPIMusic.Services.Scan.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FPIMusic.Services.Implémentation
+namespace FPIMusic.Services.Scan.Implémentation
 {
     public class ScanMediatheque : IScanMediatheque
     {
