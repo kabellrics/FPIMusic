@@ -11,10 +11,13 @@ namespace FPIMusic.Services.Implémentation
     public class ScanCompilation : IScanCompilation
     {
         private IRepoUnit context;
+        private ISettingService settings;
 
-        public ScanCompilation(IRepoUnit context)
+        public ScanCompilation(IRepoUnit context, ISettingService settings) 
         {
+            this.settings = settings;
             this.context = context;
         }
+        public async void Scan() { }
     }
 }

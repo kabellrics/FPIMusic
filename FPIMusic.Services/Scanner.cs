@@ -13,12 +13,14 @@ namespace FPIMusic.Services
     public class Scanner : IScanner
     {
         private readonly IRepoUnit _context;
-        public Scanner(IRepoUnit context)
+        private readonly ISettingService _settings;
+        public Scanner(IRepoUnit context, ISettingService settings)
         {
             _context = context;
-            Compilation = new ScanCompilation(_context);
-            Mediatheque = new ScanMediatheque(_context);
-            Deezer = new ScanDeezer(_context);
+            _settings = settings;
+            Compilation = new ScanCompilation(_context, _settings);
+            Mediatheque = new ScanMediatheque(_context, _settings);
+            Deezer = new ScanDeezer(_context, _settings);
         }
         public IScanCompilation Compilation { get; private set; }
 
