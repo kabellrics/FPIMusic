@@ -30,13 +30,14 @@ namespace FPIMusic.Services.Implémentation
             var artfolders =  Directory.EnumerateDirectories(mediathequePath);
             foreach (var artfolder in artfolders)
             {
-                if (File.Exists(Path.Combine(settings.MediathequePath,artfolder, "fanart.jpg")))
+                if (File.Exists(Path.Combine(artfolder, "fanart.jpg")))
                 {
-                    if (context.MediathequeArtistes.Find(x=>x.Name == artfolder).Count() ==0)
+                    var directoryname = new DirectoryInfo(artfolder).Name;
+                    if (context.MediathequeArtistes.Find(x=>x.Name == directoryname).Count() ==0)
                     {
                         MediathequeArtiste artiste = new MediathequeArtiste();
-                        artiste.Name = artfolder;
-                        artiste.Cover = Path.Combine(settings.MediathequePath, artfolder, "fanart.jpg");
+                        artiste.Name = directoryname;
+                        artiste.Cover = Path.Combine(artfolder, "fanart.jpg");
                         artiste = context.MediathequeArtistes.Add(artiste);
                         await SearchForMediathequeAlbum(artiste);
                     }
@@ -46,7 +47,45 @@ namespace FPIMusic.Services.Implémentation
 
         private async Task SearchForMediathequeAlbum(MediathequeArtiste artiste)
         {
-            var artfolders = Directory.EnumerateDirectories(Path.GetDirectoryName(artiste.Cover));
+            var albfolders = Directory.EnumerateDirectories(Path.GetDirectoryName(artiste.Cover));
+            foreach(var albfolder in albfolders)
+            {
+                if (File.Exists(Path.Combine( albfolder, "cover.jpg")))
+                {
+                    var directoryname = new DirectoryInfo(albfolder).Name;
+                    if (context.MediathequeAlbums.Find(x => x.Name == directoryname).Count() == 0)
+                    {
+                        MediathequeAlbum album = new MediathequeAlbum();
+                        album.Name = directoryname;
+                        album.MediathequeArtisteID = artiste.Id;
+                        album.Cover = Path.Combine( albfolder, "cover.jpg");
+                        album = context.MediathequeAlbums.Add(album);
+                        await SearchForMediathequeSong(artiste, album);
+                    }
+                }
+            }
+        }
+
+        private async Task SearchForMediathequeSong(MediathequeArtiste artiste, MediathequeAlbum album)
+        {
+            var mp3files = Directory.EnumerateFiles(Path.GetDirectoryName(album.Cover), "*.mp3", SearchOption.TopDirectoryOnly);
+            foreach (var mp3file in mp3files)
+            {
+                try
+                {
+                    var tfile = TagLib.File.Create(mp3file);
+                    string title = tfile.Tag.Title;
+                    uint Piste = tfile.Tag.Track;
+                    MediathequeSong song = new MediathequeSong();
+                    song.Artiste = artiste.Name;
+                    song.Album = album.Name;
+                    song.AlbumId = album.Id;
+                    song.Piste = (int)Piste;
+                    song.Title = title;
+                    song.Path = mp3file;
+                }
+                catch(Exception ex) { }
+            }
         }
     }
 }
