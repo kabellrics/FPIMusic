@@ -45,9 +45,9 @@ namespace FPIMusic.Services.Scan.Implémentation
                     string title = tfile.Tag.Title;
                     uint Piste = tfile.Tag.Track;
                     string albumname = tfile.Tag.Album;
-                    string artistename = string.Join(", ", tfile.Tag.AlbumArtists);
-                    DeezerArtiste artiste = await GetArtiste(artistename);
-                    DeezerAlbum album = await GetAlbum(albumname);
+                    string artistename = tfile.Tag.AlbumArtists.First() == "Various Artists" || string.IsNullOrEmpty(tfile.Tag.AlbumArtists.First()) ? tfile.Tag.FirstPerformer : tfile.Tag.AlbumArtists.First();
+                    DeezerArtiste artiste = await GetArtiste(artistename, compilfolder);
+                    DeezerAlbum album = await GetAlbum(albumname, tfile, compilfolder);
                     DeezerPlaylist playlist = await GetPlaylist(albumname, compilfolder);
                     DeezerSong song = new DeezerSong();
                     song.Album = album.Name;
@@ -64,7 +64,7 @@ namespace FPIMusic.Services.Scan.Implémentation
             }
         }
 
-        private async Task<DeezerArtiste> GetArtiste(string artistename)
+        private async Task<DeezerArtiste> GetArtiste(string artistename,string compilfolder)
         {
             var art = context.DeezerArtistes.Find(x => x.Name == artistename);
             if (art != null)
@@ -73,12 +73,14 @@ namespace FPIMusic.Services.Scan.Implémentation
             {
                 DeezerArtiste artiste = new DeezerArtiste();
                 artiste.Name = artistename;
+                if(File.Exists(Path.Combine(compilfolder, artistename, "folder.jpg")))
+                    artiste.Cover = Path.Combine(compilfolder, artistename,"folder.jpg");
                 artiste = context.DeezerArtistes.Add(artiste);
                 return artiste;
             }
         }
 
-        private async Task<DeezerAlbum> GetAlbum(string albumname)
+        private async Task<DeezerAlbum> GetAlbum(string albumname, TagLib.File tfile, string compilfolder)
         {
             var art = context.DeezerAlbums.Find(x => x.Name == albumname);
             if (art != null)
@@ -86,6 +88,20 @@ namespace FPIMusic.Services.Scan.Implémentation
             else
             {
                 DeezerAlbum album = new DeezerAlbum();
+                if (tfile.Tag.Pictures.Length > 0)
+                {
+                    try
+                    {
+                        var bin = (byte[])(tfile.Tag.Pictures[0].Data.Data);
+                        var albcoverDestination = Path.Combine(compilfolder, "cover.jpg");
+                        File.WriteAllBytes(albcoverDestination, bin);
+                        album.Cover = albcoverDestination;
+                    }
+                    catch (Exception ex)
+                    {
+                        //throw;
+                    }
+                }
                 album.Name = albumname;
                 album = context.DeezerAlbums.Add(album);
                 return album;

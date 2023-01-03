@@ -8,6 +8,7 @@ namespace FPIMusic.Models.Compilation
 {
     public class CompilationArtiste : AutoPlaylistElement
     {
+        public string Cover { get; set; }
         public CompilationArtiste() { AutoPlaylistElementType = AutoPlaylistElementType.CompilationArtiste; }
     }
 }

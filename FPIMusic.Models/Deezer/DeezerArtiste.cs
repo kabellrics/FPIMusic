@@ -8,6 +8,7 @@ namespace FPIMusic.Models.Deezer
 {
     public class DeezerArtiste : AutoPlaylistElement
     {
+        public string Cover { get; set; }
         public DeezerArtiste() { AutoPlaylistElementType = AutoPlaylistElementType.DeezerArtiste; }
     }
 }

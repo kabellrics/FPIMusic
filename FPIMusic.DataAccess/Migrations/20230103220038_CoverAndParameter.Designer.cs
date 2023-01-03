@@ -2,6 +2,7 @@
 using FPIMusic.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FPIMusic.DataAccess.Migrations
 {
     [DbContext(typeof(FPIMusicRepository))]
-    partial class FPIMusicRepositoryModelSnapshot : ModelSnapshot
+    [Migration("20230103220038_CoverAndParameter")]
+    partial class CoverAndParameter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
@@ -171,10 +174,6 @@ namespace FPIMusic.DataAccess.Migrations
 
                     b.Property<int>("AutoPlaylistElementType")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Cover")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()

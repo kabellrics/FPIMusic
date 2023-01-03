@@ -30,7 +30,7 @@ namespace FPIMusic.Services.Scan.Implémentation
             var artfolders =  Directory.EnumerateDirectories(mediathequePath);
             foreach (var artfolder in artfolders)
             {
-                if (File.Exists(Path.Combine(artfolder, "fanart.jpg")))
+                if (File.Exists(Path.Combine(artfolder, "folder.jpg")))
                 {
                     var directoryname = new DirectoryInfo(artfolder).Name;
                     if (context.MediathequeArtistes.Find(x=>x.Name == directoryname).Count() ==0)

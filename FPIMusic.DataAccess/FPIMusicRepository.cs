@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FPIMusic.Models;
+using System.Reflection.Emit;
 
 namespace FPIMusic.DataAccess
 {
@@ -22,7 +24,7 @@ namespace FPIMusic.DataAccess
         public DbSet<DeezerArtiste> DeezerArtistes { get; set; }
         public DbSet<DeezerPlaylist> DeezerPlaylists { get; set; }
         public DbSet<DeezerSong> DeezerSongs { get; set; }
-
+        public DbSet<DBParameter> Parametre { get; set; }
         public string DbPath { get; }
 
         public FPIMusicRepository()
@@ -52,6 +54,28 @@ namespace FPIMusic.DataAccess
             builder.Entity<MediathequeSong>()
                 .HasIndex(u => u.Path)
                 .IsUnique();
+
+            builder.Entity<DBParameter>().HasData(
+                new DBParameter()
+                {
+                    Id = 1,
+                    Key = "MediathequePath",
+                    Value = string.Empty,
+                });
+            builder.Entity<DBParameter>().HasData(
+                new DBParameter()
+                {
+                    Id = 2,
+                    Key = "CompilationPath",
+                    Value = string.Empty,
+                });
+            builder.Entity<DBParameter>().HasData(
+                new DBParameter()
+                {
+                    Id = 3,
+                    Key = "DeezerPath",
+                    Value = string.Empty,
+                });
         }
     }
 }
