@@ -74,7 +74,13 @@ namespace FPIMusic.Services.Scan.Implémentation
                 DeezerArtiste artiste = new DeezerArtiste();
                 artiste.Name = artistename;
                 if(File.Exists(Path.Combine(compilfolder, artistename, "folder.jpg")))
-                    artiste.Cover = Path.Combine(compilfolder, artistename,"folder.jpg");
+                {
+                    var SourceCover = Path.Combine(compilfolder, artistename, "folder.jpg");
+                    var DestCover = Path.Combine(compilfolder,$"{artistename}.jpg");
+                    File.Copy(SourceCover, DestCover, true);
+                    artiste.Cover= DestCover;
+                    Directory.Delete(Path.Combine(compilfolder, artistename), true);
+                }
                 artiste = context.DeezerArtistes.Add(artiste);
                 return artiste;
             }
@@ -93,7 +99,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                     try
                     {
                         var bin = (byte[])(tfile.Tag.Pictures[0].Data.Data);
-                        var albcoverDestination = Path.Combine(compilfolder, "cover.jpg");
+                        var albcoverDestination = Path.Combine(compilfolder, $"{albumname}.jpg");
                         File.WriteAllBytes(albcoverDestination, bin);
                         album.Cover = albcoverDestination;
                     }
