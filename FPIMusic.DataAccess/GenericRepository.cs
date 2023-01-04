@@ -19,6 +19,11 @@ namespace FPIMusic.DataAccess
             _context.Set<T>().Add(entity);
             return entity;
         }
+        public T Save(T entity)
+        {
+            _context.Update(entity);
+            return entity;
+        }
         public void AddRange(IEnumerable<T> entities)
         {
             _context.Set<T>().AddRange(entities);

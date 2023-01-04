@@ -1,4 +1,5 @@
-﻿using FPIMusic.Models.Compilation;
+﻿using FPIMusic.Models;
+using FPIMusic.Models.Compilation;
 using FPIMusic.Models.Deezer;
 using FPIMusic.Models.Mediatheque;
 using System;
@@ -69,6 +70,12 @@ namespace FPIMusic.DataAccess
     public class DeezerPlaylistRepository : GenericRepository<DeezerPlaylist>, IDeezerPlaylistRepository
     {
         public DeezerPlaylistRepository(FPIMusicRepository context) : base(context)
+        {
+        }
+    }
+    public class SettingsRepository : GenericRepository<DBParameter>, ISettingsRepository
+    {
+        public SettingsRepository(FPIMusicRepository context) : base(context)
         {
         }
     }

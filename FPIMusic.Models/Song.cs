@@ -16,6 +16,7 @@ namespace FPIMusic.Models
         public int Piste { get; set; }
         public string Artiste { get; set; }
         public string Album { get; set; }
-        public SongType SongType { get; set; }  
+        public SongType SongType { get; set; }
+        public string Cover { get; set; }
     }
 }

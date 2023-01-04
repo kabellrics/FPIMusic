@@ -11,5 +11,8 @@ namespace FPIMusic.Services
         public string CompilationPath { get; }
         public string MediathequePath { get; }
         public string DeezerPath { get; }
+        void SetCompilationPath(string path);
+        void SetMediathequePath(string path);
+        void SetDeezerPath(string path)
     }
 }

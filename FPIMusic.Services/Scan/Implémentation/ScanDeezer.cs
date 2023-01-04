@@ -22,6 +22,14 @@ namespace FPIMusic.Services.Scan.Implémentation
         }
         public async void Scan()
         {
+            if (!Directory.Exists(Path.Combine(settings.DeezerPath, "AlbumCover")))
+            {
+                Directory.CreateDirectory(Path.Combine(settings.DeezerPath, "AlbumCover"));
+            }
+            if (!Directory.Exists(Path.Combine(settings.DeezerPath, "ArtistCover")))
+            {
+                Directory.CreateDirectory(Path.Combine(settings.DeezerPath, "ArtistCover"));
+            }
             await SearchForDeezer(settings.DeezerPath);
         }
 
@@ -58,6 +66,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                     song.Piste = (int)Piste;
                     song.Path = mp3file;
                     song.Title = title;
+                    song.Cover = album.Cover;
                     context.DeezerSongs.Add(song);
                 }
                 catch (Exception ex) { }
@@ -76,7 +85,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                 if(File.Exists(Path.Combine(compilfolder, artistename, "folder.jpg")))
                 {
                     var SourceCover = Path.Combine(compilfolder, artistename, "folder.jpg");
-                    var DestCover = Path.Combine(compilfolder,$"{artistename}.jpg");
+                    var DestCover = Path.Combine(Path.Combine(settings.DeezerPath, "ArtistCover"), $"{artistename}.jpg");
                     File.Copy(SourceCover, DestCover, true);
                     artiste.Cover= DestCover;
                     Directory.Delete(Path.Combine(compilfolder, artistename), true);
@@ -99,7 +108,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                     try
                     {
                         var bin = (byte[])(tfile.Tag.Pictures[0].Data.Data);
-                        var albcoverDestination = Path.Combine(compilfolder, $"{albumname}.jpg");
+                        var albcoverDestination = Path.Combine(Path.Combine(settings.DeezerPath, "AlbumCover"), $"{albumname}.jpg");
                         File.WriteAllBytes(albcoverDestination, bin);
                         album.Cover = albcoverDestination;
                     }

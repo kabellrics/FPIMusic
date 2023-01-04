@@ -1,4 +1,6 @@
 ﻿using FPIMusic.DataAccess;
+using FPIMusic.Models.Compilation;
+using FPIMusic.Services.Compilation.ExtendedObject;
 using FPIMusic.Services.Compilation.Interface;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,19 @@ namespace FPIMusic.Services.Compilation.Implementation
         {
             this.context = context;
             this.settings = settings;
+        }
+        public CompilationSong GetById(int id)
+        {
+            return context.CompilationSongs.GetById(id);
+        }
+        public IEnumerable<CompilationSong> GetByArtisteId(int id)
+        {
+            return context.CompilationSongs.Find(x=>x.ArtisteId == id).OrderBy(x=>x.Piste);
+        }
+
+        public IEnumerable<CompilationSong> GetByAlbumId(int id)
+        {
+            return context.CompilationSongs.Find(x => x.AlbumId == id).OrderBy(x => x.Piste); ;
         }
     }
 }

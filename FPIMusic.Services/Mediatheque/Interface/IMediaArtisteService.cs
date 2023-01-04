@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FPIMusic.Services.Mediatheque.ExtendedObject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,9 @@ namespace FPIMusic.Services.Mediatheque.Interface
 {
     public interface IMediaArtisteService
     {
+        MediaExtendedArtiste GetById(int id);
+        IEnumerable<MediaExtendedArtiste> GetByName(string name);
+        IEnumerable<MediaExtendedArtiste> GetAll();
+        IEnumerable<IGrouping<char, MediaExtendedArtiste>> GetGrouped();
     }
 }

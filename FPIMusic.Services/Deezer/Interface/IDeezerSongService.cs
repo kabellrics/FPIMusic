@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FPIMusic.Models.Deezer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,8 @@ namespace FPIMusic.Services.Deezer.Interface
 {
     public interface IDeezerSongService
     {
+        DeezerSong GetById(int id);
+        IEnumerable<DeezerSong> GetByArtisteId(int id);
+        IEnumerable<DeezerSong> GetByAlbumId(int id);
     }
 }

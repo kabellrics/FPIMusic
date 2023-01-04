@@ -1,4 +1,6 @@
 ﻿using FPIMusic.DataAccess;
+using FPIMusic.Models.Compilation;
+using FPIMusic.Models.Mediatheque;
 using FPIMusic.Services.Mediatheque.Interface;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,14 @@ namespace FPIMusic.Services.Mediatheque.Implementation
         {
             this.context = context;
             this.settings = settings;
+        }
+        public MediathequeSong GetById(int id)
+        {
+            return context.MediathequeSongs.GetById(id);
+        }
+        public IEnumerable<MediathequeSong> GetByAlbumId(int id)
+        {
+            return context.MediathequeSongs.Find(x => x.AlbumId == id).OrderBy(x => x.Piste); ;
         }
     }
 }

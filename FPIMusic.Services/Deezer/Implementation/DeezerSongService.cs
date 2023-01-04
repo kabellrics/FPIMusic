@@ -1,4 +1,6 @@
 ﻿using FPIMusic.DataAccess;
+using FPIMusic.Models.Compilation;
+using FPIMusic.Models.Deezer;
 using FPIMusic.Services.Deezer.Interface;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,19 @@ namespace FPIMusic.Services.Deezer.Implementation
         {
             this.context = context;
             this.settings = settings;
+        }
+        public DeezerSong GetById(int id)
+        {
+            return context.DeezerSongs.GetById(id);
+        }
+        public IEnumerable<DeezerSong> GetByArtisteId(int id)
+        {
+            return context.DeezerSongs.Find(x => x.ArtisteId == id).OrderBy(x => x.Piste);
+        }
+
+        public IEnumerable<DeezerSong> GetByAlbumId(int id)
+        {
+            return context.DeezerSongs.Find(x => x.AlbumId == id).OrderBy(x => x.Piste); ;
         }
     }
 }

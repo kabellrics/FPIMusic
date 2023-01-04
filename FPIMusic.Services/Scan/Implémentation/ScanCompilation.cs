@@ -21,6 +21,14 @@ namespace FPIMusic.Services.Scan.Implémentation
         }
         public async void Scan()
         {
+            if (!Directory.Exists(Path.Combine(settings.CompilationPath, "ArtistCover")))
+            {
+                Directory.CreateDirectory(Path.Combine(settings.CompilationPath, "ArtistCover"));
+            }
+            if (!Directory.Exists(Path.Combine(settings.CompilationPath, "AlbumCover")))
+            {
+                Directory.CreateDirectory(Path.Combine(settings.CompilationPath, "AlbumCover"));
+            }
             await SearchForCompilation(settings.CompilationPath);
         }
 
@@ -55,6 +63,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                     song.Piste = (int)Piste;
                     song.Path = mp3file;
                     song.Title = title;
+                    song.Cover = album.Cover;
                     context.CompilationSongs.Add(song);
                 }
                 catch (Exception ex) { }
@@ -70,7 +79,7 @@ namespace FPIMusic.Services.Scan.Implémentation
             {
                 CompilationAlbum album = new CompilationAlbum();
                 album.Name = albumname;
-                album.Cover = Path.Combine(compilfolder, "cover.jpg");
+                album.Cover = Path.Combine(Path.Combine(settings.CompilationPath, "AlbumCover"), "cover.jpg");
                 album = context.CompilationAlbums.Add(album);
                 return album;
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FPIMusic.Services.Deezer.ExtendeObject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,9 @@ namespace FPIMusic.Services.Deezer.Interface
 {
     public interface IDeezerAlbumService
     {
+        DeezerExtendedAlbum GetById(int id);
+        IEnumerable<DeezerExtendedAlbum> GetByName(string name);
+        IEnumerable<DeezerExtendedAlbum> GetAll();
+        IEnumerable<IGrouping<char, DeezerExtendedAlbum>> GetGrouped();
     }
 }

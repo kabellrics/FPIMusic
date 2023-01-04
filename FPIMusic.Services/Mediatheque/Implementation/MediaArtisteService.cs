@@ -1,4 +1,8 @@
 ﻿using FPIMusic.DataAccess;
+using FPIMusic.Models.Deezer;
+using FPIMusic.Models.Mediatheque;
+using FPIMusic.Services.Deezer.ExtendeObject;
+using FPIMusic.Services.Mediatheque.ExtendedObject;
 using FPIMusic.Services.Mediatheque.Interface;
 using System;
 using System.Collections.Generic;
@@ -17,6 +21,32 @@ namespace FPIMusic.Services.Mediatheque.Implementation
         {
             this.context = context;
             this.settings = settings;
+        }
+        private MediaExtendedArtiste CreateExtended(MediathequeArtiste art)
+        {
+            MediaExtendedArtiste extart = (MediaExtendedArtiste)art;
+            var albs = context.MediathequeAlbums.Find(x => x.MediathequeArtisteID == extart.Id);
+            extart.NbAlbum = albs.Count();
+            extart.NbSong = context.MediathequeSongs.Find(x=> albs.Select(x=>x.Id).Contains(x.AlbumId)).Count();
+            return extart;
+        }
+        public MediaExtendedArtiste GetById(int id)
+        {
+            return CreateExtended(context.MediathequeArtistes.GetById(id));
+        }
+        public IEnumerable<MediaExtendedArtiste> GetByName(string name)
+        {
+            return context.MediathequeArtistes.Find(x => x.Name.Contains(name)).Select(x => CreateExtended(x));
+        }
+        public IEnumerable<MediaExtendedArtiste> GetAll()
+        {
+            return context.MediathequeArtistes.GetAll().Select(x => CreateExtended(x));
+        }
+        public IEnumerable<IGrouping<char, MediaExtendedArtiste>> GetGrouped()
+        {
+            var albs = context.MediathequeArtistes.GetAll();
+            return from alb in albs
+                   group CreateExtended(alb) by alb.Name[0];
         }
     }
 }

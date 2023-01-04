@@ -82,7 +82,9 @@ namespace FPIMusic.Services.Scan.Implémentation
                     song.AlbumId = album.Id;
                     song.Piste = (int)Piste;
                     song.Title = title;
+                    song.Cover = album.Cover;
                     song.Path = mp3file;
+                    context.MediathequeSongs.Add(song);
                 }
                 catch(Exception ex) { }
             }

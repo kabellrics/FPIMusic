@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FPIMusic.Models.Compilation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,8 @@ namespace FPIMusic.Services.Compilation.Interface
 {
     public interface ICompilSongService
     {
+        CompilationSong GetById(int id);
+        IEnumerable<CompilationSong> GetByArtisteId(int id);
+        IEnumerable<CompilationSong> GetByAlbumId(int id);
     }
 }
