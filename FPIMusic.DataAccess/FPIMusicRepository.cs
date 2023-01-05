@@ -30,7 +30,9 @@ namespace FPIMusic.DataAccess
         public FPIMusicRepository()
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
-            var path = Environment.GetFolderPath(folder);
+            var path = Path.Combine(Environment.GetFolderPath(folder),"FPIMusic");
+            if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(folder), "FPIMusic")))
+                Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(folder), "FPIMusic"));
             DbPath = System.IO.Path.Join(path, "FPIMusic.db");
         }
 

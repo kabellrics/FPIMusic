@@ -71,6 +71,10 @@ namespace FPIMusic.Services.Scan.Implémentation
                         artiste = context.MediathequeArtistes.Add(artiste);
                         await SearchForMediathequeAlbum(artiste);
                     }
+                    else
+                    {
+                        await SearchForMediathequeAlbum(context.MediathequeArtistes.Find(x => x.Name == directoryname).First());
+                    }
                 }
             }
         }
@@ -91,6 +95,10 @@ namespace FPIMusic.Services.Scan.Implémentation
                         album.Cover = Path.Combine( albfolder, "cover.jpg");
                         album = context.MediathequeAlbums.Add(album);
                         await SearchForMediathequeSong(artiste, album);
+                    }
+                    else
+                    {
+                        await SearchForMediathequeSong(artiste, context.MediathequeAlbums.Find(x => x.Name == directoryname).First());
                     }
                 }
             }
