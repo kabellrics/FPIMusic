@@ -2,6 +2,7 @@
 using FPIMusic.Models.Compilation;
 using FPIMusic.Models.Deezer;
 using FPIMusic.Services.Scan.Interface;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,17 +23,54 @@ namespace FPIMusic.Services.Scan.Implémentation
         }
         public async void Scan()
         {
-            if (!Directory.Exists(Path.Combine(settings.DeezerPath, "AlbumCover")))
+            if (!Directory.Exists(Path.Combine(settings.DeezerPath.Value, "AlbumCover")))
             {
-                Directory.CreateDirectory(Path.Combine(settings.DeezerPath, "AlbumCover"));
+                Directory.CreateDirectory(Path.Combine(settings.DeezerPath.Value, "AlbumCover"));
             }
-            if (!Directory.Exists(Path.Combine(settings.DeezerPath, "ArtistCover")))
+            if (!Directory.Exists(Path.Combine(settings.DeezerPath.Value, "ArtistCover")))
             {
-                Directory.CreateDirectory(Path.Combine(settings.DeezerPath, "ArtistCover"));
+                Directory.CreateDirectory(Path.Combine(settings.DeezerPath.Value, "ArtistCover"));
             }
-            await SearchForDeezer(settings.DeezerPath);
+            await SearchForDeezer(settings.DeezerPath.Value);
         }
-
+        public async void Clean()
+        {
+            var songs = context.DeezerSongs.GetAll();
+            foreach (var song in songs)
+            {
+                if (!File.Exists(song.Path))
+                {
+                    context.DeezerSongs.Remove(song);
+                }
+            }
+            var albs = context.DeezerAlbums.GetAll();
+            foreach (var alb in albs)
+            {
+                var sg = context.DeezerSongs.Find(x => x.AlbumId == alb.Id);
+                if (sg == null || sg.Count() == 0)
+                {
+                    context.DeezerAlbums.Remove(alb);
+                }
+            }
+            var arts = context.DeezerArtistes.GetAll();
+            foreach (var art in arts)
+            {
+                var sg = context.DeezerSongs.Find(x => x.ArtisteId == art.Id);
+                if (sg == null || sg.Count() == 0)
+                {
+                    context.DeezerArtistes.Remove(art);
+                }
+            }
+            var plays = context.DeezerPlaylists.GetAll();
+            foreach (var play in plays)
+            {
+                var sg = context.DeezerSongs.Find(x => x.PlaylistId == play.Id);
+                if (sg == null || sg.Count() == 0)
+                {
+                    context.DeezerPlaylists.Remove(play);
+                }
+            }
+        }
         private async Task SearchForDeezer(string deezerPath)
         {
             var compilfolders = Directory.EnumerateDirectories(deezerPath);
@@ -44,7 +82,8 @@ namespace FPIMusic.Services.Scan.Implémentation
 
         private async Task GetDataInDeezerPlaylistFolder(string compilfolder)
         {
-            var mp3files = Directory.EnumerateFiles(compilfolder, "*.mp3", SearchOption.TopDirectoryOnly);
+            var mp3files = Directory.EnumerateFiles(compilfolder, "*.mp3", SearchOption.AllDirectories);
+            var artfolderfiles = Directory.EnumerateFiles(compilfolder, "folder.jpg", SearchOption.AllDirectories);
             foreach (var mp3file in mp3files)
             {
                 try
@@ -54,7 +93,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                     uint Piste = tfile.Tag.Track;
                     string albumname = tfile.Tag.Album;
                     string artistename = tfile.Tag.AlbumArtists.First() == "Various Artists" || string.IsNullOrEmpty(tfile.Tag.AlbumArtists.First()) ? tfile.Tag.FirstPerformer : tfile.Tag.AlbumArtists.First();
-                    DeezerArtiste artiste = await GetArtiste(artistename, compilfolder);
+                    DeezerArtiste artiste = await GetArtiste(artistename, artfolderfiles);
                     DeezerAlbum album = await GetAlbum(albumname, tfile, compilfolder);
                     DeezerPlaylist playlist = await GetPlaylist(albumname, compilfolder);
                     DeezerSong song = new DeezerSong();
@@ -73,7 +112,7 @@ namespace FPIMusic.Services.Scan.Implémentation
             }
         }
 
-        private async Task<DeezerArtiste> GetArtiste(string artistename,string compilfolder)
+        private async Task<DeezerArtiste> GetArtiste(string artistename,IEnumerable<string> artfolderfiles)
         {
             var art = context.DeezerArtistes.Find(x => x.Name == artistename);
             if (art != null)
@@ -82,13 +121,13 @@ namespace FPIMusic.Services.Scan.Implémentation
             {
                 DeezerArtiste artiste = new DeezerArtiste();
                 artiste.Name = artistename;
-                if(File.Exists(Path.Combine(compilfolder, artistename, "folder.jpg")))
+                var folderpath = artfolderfiles.FirstOrDefault(x => x.Contains(Path.Combine(artiste.Name,"folder.jpg")));
+                if(!string.IsNullOrEmpty(folderpath))
                 {
-                    var SourceCover = Path.Combine(compilfolder, artistename, "folder.jpg");
-                    var DestCover = Path.Combine(Path.Combine(settings.DeezerPath, "ArtistCover"), $"{artistename}.jpg");
+                    var SourceCover = folderpath;
+                    var DestCover = Path.Combine(Path.Combine(settings.DeezerPath.Value, "ArtistCover"), $"{artistename}.jpg");
                     File.Copy(SourceCover, DestCover, true);
-                    artiste.Cover= DestCover;
-                    Directory.Delete(Path.Combine(compilfolder, artistename), true);
+                    artiste.Cover = DestCover;
                 }
                 artiste = context.DeezerArtistes.Add(artiste);
                 return artiste;
@@ -108,7 +147,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                     try
                     {
                         var bin = (byte[])(tfile.Tag.Pictures[0].Data.Data);
-                        var albcoverDestination = Path.Combine(Path.Combine(settings.DeezerPath, "AlbumCover"), $"{albumname}.jpg");
+                        var albcoverDestination = Path.Combine(Path.Combine(settings.DeezerPath.Value, "AlbumCover"), $"{albumname}.jpg");
                         File.WriteAllBytes(albcoverDestination, bin);
                         album.Cover = albcoverDestination;
                     }

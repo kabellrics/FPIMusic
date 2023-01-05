@@ -9,5 +9,6 @@ namespace FPIMusic.Services.Scan.Interface
     public interface IScanDeezer
     {
         void Scan();
+        void Clean();
     }
 }

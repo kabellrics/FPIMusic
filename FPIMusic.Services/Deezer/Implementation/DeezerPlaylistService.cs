@@ -1,7 +1,10 @@
 ﻿using FPIMusic.DataAccess;
+using FPIMusic.Models.Compilation;
 using FPIMusic.Models.Deezer;
+using FPIMusic.Services.Compilation.ExtendedObject;
 using FPIMusic.Services.Deezer.ExtendeObject;
 using FPIMusic.Services.Deezer.Interface;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +31,10 @@ namespace FPIMusic.Services.Deezer.Implementation
             extart.NbAlbum = songs.GroupBy(x => x.AlbumId).Count();
             extart.NbArtiste = songs.GroupBy(x => x.ArtisteId).Count();
             return extart;
+        }
+        public DeezerExtendedPlaylist Update(DeezerPlaylist item)
+        {
+            return CreateExtended(context.DeezerPlaylists.Save(item));
         }
         public DeezerExtendedPlaylist GetById(int id)
         {

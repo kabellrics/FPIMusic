@@ -2,6 +2,7 @@
 using FPIMusic.Services.Compilation.Implementation;
 using FPIMusic.Services.Compilation.Interface;
 using FPIMusic.Services.Scan.Implémentation;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;

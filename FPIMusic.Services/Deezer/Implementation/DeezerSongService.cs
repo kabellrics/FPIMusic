@@ -1,7 +1,9 @@
 ﻿using FPIMusic.DataAccess;
 using FPIMusic.Models.Compilation;
 using FPIMusic.Models.Deezer;
+using FPIMusic.Services.Compilation.ExtendedObject;
 using FPIMusic.Services.Deezer.Interface;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,10 @@ namespace FPIMusic.Services.Deezer.Implementation
         {
             this.context = context;
             this.settings = settings;
+        }
+        public DeezerSong Update(DeezerSong item)
+        {
+            return context.DeezerSongs.Save(item);
         }
         public DeezerSong GetById(int id)
         {

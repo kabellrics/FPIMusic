@@ -9,5 +9,6 @@ namespace FPIMusic.Services.Scan.Interface
     public interface IScanCompilation
     {
         void Scan();
+        void Clean();
     }
 }

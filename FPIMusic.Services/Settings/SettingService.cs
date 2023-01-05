@@ -1,4 +1,5 @@
 ﻿using FPIMusic.DataAccess;
+using FPIMusic.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FPIMusic.Services
+namespace FPIMusic.Services.Settings
 {
     public class SettingService : ISettingService
     {
@@ -33,11 +34,11 @@ namespace FPIMusic.Services
             setting.Value = path;
             _context.Save(setting);
         }
-        public string CompilationPath { get;  }
+        public DBParameter CompilationPath { get { return _context.GetById(2); } }
 
-        public string MediathequePath { get;  }
+        public DBParameter MediathequePath { get { return _context.GetById(1); } }
 
-        public string DeezerPath { get;  }
+        public DBParameter DeezerPath { get { return _context.GetById(3); } }
 
 
     }

@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FPIMusic.DataAccess\FPIMusic.DataAccess.csproj" />
     <ProjectReference Include="..\FPIMusic.Models\FPIMusic.Models.csproj" />
+    <ProjectReference Include="..\FPIMusic.Services\FPIMusic.Services.csproj" />
   </ItemGroup>
 
 </Project>

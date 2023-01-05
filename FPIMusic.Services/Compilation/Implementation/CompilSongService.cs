@@ -2,6 +2,7 @@
 using FPIMusic.Models.Compilation;
 using FPIMusic.Services.Compilation.ExtendedObject;
 using FPIMusic.Services.Compilation.Interface;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,10 @@ namespace FPIMusic.Services.Compilation.Implementation
         {
             this.context = context;
             this.settings = settings;
+        }
+        public CompilationSong Update(CompilationSong item)
+        {
+            return context.CompilationSongs.Save(item);
         }
         public CompilationSong GetById(int id)
         {

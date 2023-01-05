@@ -1,6 +1,7 @@
 ﻿using FPIMusic.DataAccess;
 using FPIMusic.Models.Mediatheque;
 using FPIMusic.Services.Scan.Interface;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,38 @@ namespace FPIMusic.Services.Scan.Implémentation
 
         public async void Scan()
         {
-            await SearchForMediathequeArtiste(settings.MediathequePath);
+            await SearchForMediathequeArtiste(settings.MediathequePath.Value);
         }
+        public async void Clean() 
+        {
+            var songs = context.MediathequeSongs.GetAll();
+            foreach (var song in songs)
+            {
+                if(!File.Exists(song.Path))
+                {
+                    context.MediathequeSongs.Remove(song);
+                }
+            }
+            var albs = context.MediathequeAlbums.GetAll();
+            foreach(var alb in albs)
+            {
+                var sg = context.MediathequeSongs.Find(x=>x.AlbumId == alb.Id);
+                if(sg == null || sg.Count() == 0)
+                {
+                    context.MediathequeAlbums.Remove(alb);
+                }
+            }
+            var arts = context.MediathequeArtistes.GetAll();
+            foreach(var art in arts)
+            {
+                var cd = context.MediathequeAlbums.Find(x=>x.MediathequeArtisteID== art.Id);
+                if (cd == null || cd.Count() == 0)
+                {
+                    context.MediathequeArtistes.Remove(art);
+                }
 
+            }
+        }
         private async Task SearchForMediathequeArtiste(string mediathequePath)
         {
             var artfolders =  Directory.EnumerateDirectories(mediathequePath);

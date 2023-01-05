@@ -1,7 +1,10 @@
 ﻿using FPIMusic.DataAccess;
 using FPIMusic.Models.Compilation;
+using FPIMusic.Models.Deezer;
 using FPIMusic.Models.Mediatheque;
+using FPIMusic.Services.Deezer.ExtendeObject;
 using FPIMusic.Services.Mediatheque.Interface;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +22,10 @@ namespace FPIMusic.Services.Mediatheque.Implementation
         {
             this.context = context;
             this.settings = settings;
+        }
+        public MediathequeSong Update(MediathequeSong item)
+        {
+            return context.MediathequeSongs.Save(item);
         }
         public MediathequeSong GetById(int id)
         {

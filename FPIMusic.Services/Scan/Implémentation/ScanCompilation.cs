@@ -1,6 +1,7 @@
 ﻿using FPIMusic.DataAccess;
 using FPIMusic.Models.Compilation;
 using FPIMusic.Services.Scan.Interface;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,17 +22,46 @@ namespace FPIMusic.Services.Scan.Implémentation
         }
         public async void Scan()
         {
-            if (!Directory.Exists(Path.Combine(settings.CompilationPath, "ArtistCover")))
+            if (!Directory.Exists(Path.Combine(settings.CompilationPath.Value, "ArtistCover")))
             {
-                Directory.CreateDirectory(Path.Combine(settings.CompilationPath, "ArtistCover"));
+                Directory.CreateDirectory(Path.Combine(settings.CompilationPath.Value, "ArtistCover"));
             }
-            if (!Directory.Exists(Path.Combine(settings.CompilationPath, "AlbumCover")))
+            if (!Directory.Exists(Path.Combine(settings.CompilationPath.Value, "AlbumCover")))
             {
-                Directory.CreateDirectory(Path.Combine(settings.CompilationPath, "AlbumCover"));
+                Directory.CreateDirectory(Path.Combine(settings.CompilationPath.Value, "AlbumCover"));
             }
-            await SearchForCompilation(settings.CompilationPath);
+            await SearchForCompilation(settings.CompilationPath.Value);
         }
 
+        public async void Clean()
+        {
+            var songs = context.CompilationSongs.GetAll();
+            foreach (var song in songs)
+            {
+                if (!File.Exists(song.Path))
+                {
+                    context.CompilationSongs.Remove(song);
+                }
+            }
+            var albs = context.CompilationAlbums.GetAll();
+            foreach (var alb in albs)
+            {
+                var sg = context.CompilationSongs.Find(x => x.AlbumId == alb.Id);
+                if (sg == null || sg.Count() == 0)
+                {
+                    context.CompilationAlbums.Remove(alb);
+                }
+            }
+            var arts = context.CompilationArtistes.GetAll();
+            foreach (var art in arts)
+            {
+                var sg = context.CompilationSongs.Find(x => x.ArtisteId == art.Id);
+                if (sg == null || sg.Count() == 0)
+                {
+                    context.CompilationArtistes.Remove(art);
+                }
+            }
+        }
         private async Task SearchForCompilation(string compilationPath)
         {
             var compilfolders = Directory.EnumerateDirectories(compilationPath);
@@ -79,7 +109,7 @@ namespace FPIMusic.Services.Scan.Implémentation
             {
                 CompilationAlbum album = new CompilationAlbum();
                 album.Name = albumname;
-                album.Cover = Path.Combine(Path.Combine(settings.CompilationPath, "AlbumCover"), "cover.jpg");
+                album.Cover = Path.Combine(Path.Combine(settings.CompilationPath.Value, "AlbumCover"), "cover.jpg");
                 album = context.CompilationAlbums.Add(album);
                 return album;
             }

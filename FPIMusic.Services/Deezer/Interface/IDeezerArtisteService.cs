@@ -1,4 +1,5 @@
-﻿using FPIMusic.Services.Deezer.ExtendeObject;
+﻿using FPIMusic.Models.Deezer;
+using FPIMusic.Services.Deezer.ExtendeObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace FPIMusic.Services.Deezer.Interface
 {
     public interface IDeezerArtisteService
     {
+        DeezerExtendedArtiste Update(DeezerArtiste item);
         DeezerExtendedArtiste GetById(int id);
         IEnumerable<DeezerExtendedArtiste> GetByName(string name);
         IEnumerable<DeezerExtendedArtiste> GetAll();

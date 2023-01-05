@@ -3,6 +3,7 @@ using FPIMusic.Services.Compilation;
 using FPIMusic.Services.Deezer;
 using FPIMusic.Services.Mediatheque;
 using FPIMusic.Services.Scan.Implémentation;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;

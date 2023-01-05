@@ -4,6 +4,7 @@ using FPIMusic.Models.Mediatheque;
 using FPIMusic.Services.Deezer.ExtendeObject;
 using FPIMusic.Services.Mediatheque.ExtendedObject;
 using FPIMusic.Services.Mediatheque.Interface;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,10 @@ namespace FPIMusic.Services.Mediatheque.Implementation
             extart.NbAlbum = albs.Count();
             extart.NbSong = context.MediathequeSongs.Find(x=> albs.Select(x=>x.Id).Contains(x.AlbumId)).Count();
             return extart;
+        }
+        public MediaExtendedArtiste Update(MediathequeArtiste item)
+        {
+            return CreateExtended(context.MediathequeArtistes.Save(item));
         }
         public MediaExtendedArtiste GetById(int id)
         {

@@ -1,7 +1,10 @@
 ﻿using FPIMusic.DataAccess;
+using FPIMusic.Models.Deezer;
 using FPIMusic.Models.Mediatheque;
+using FPIMusic.Services.Deezer.ExtendeObject;
 using FPIMusic.Services.Mediatheque.ExtendedObject;
 using FPIMusic.Services.Mediatheque.Interface;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +32,10 @@ namespace FPIMusic.Services.Mediatheque.Implementation
         public MediaExtendedAlbum GetById(int id)
         {
             return CreateExtended(context.MediathequeAlbums.GetById(id));
+        }
+        public MediaExtendedAlbum Update(MediathequeAlbum item)
+        {
+            return CreateExtended(context.MediathequeAlbums.Save(item));
         }
         public IEnumerable<MediaExtendedAlbum> GetByArtiste(int id)
         {

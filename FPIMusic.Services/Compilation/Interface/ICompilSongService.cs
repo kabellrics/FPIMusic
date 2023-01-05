@@ -9,6 +9,7 @@ namespace FPIMusic.Services.Compilation.Interface
 {
     public interface ICompilSongService
     {
+        CompilationSong Update(CompilationSong item);
         CompilationSong GetById(int id);
         IEnumerable<CompilationSong> GetByArtisteId(int id);
         IEnumerable<CompilationSong> GetByAlbumId(int id);

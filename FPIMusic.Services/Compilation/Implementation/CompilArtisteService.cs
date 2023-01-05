@@ -2,6 +2,7 @@
 using FPIMusic.Models.Compilation;
 using FPIMusic.Services.Compilation.ExtendedObject;
 using FPIMusic.Services.Compilation.Interface;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,10 @@ namespace FPIMusic.Services.Compilation.Implementation
             extalb.NbSong = songs.Count();
             extalb.NbAlbum = songs.GroupBy(x => x.AlbumId).Count();
             return extalb;
+        }
+        public CompilExtendedArtiste Update(CompilationArtiste item)
+        {
+            return CreateExtended(context.CompilationArtistes.Save(item));
         }
         public CompilExtendedArtiste GetById(int id)
         {

@@ -2,6 +2,7 @@
 using FPIMusic.Services.Deezer.Implementation;
 using FPIMusic.Services.Mediatheque.Implementation;
 using FPIMusic.Services.Mediatheque.Interface;
+using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
