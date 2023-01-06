@@ -88,40 +88,46 @@ namespace FPIMusic.Services.Scan.Implémentation
             {
                 try
                 {
-                    var tfile = TagLib.File.Create(mp3file);
-                    string title = tfile.Tag.Title;
-                    uint Piste = tfile.Tag.Track;
-                    string albumname = tfile.Tag.Album;
-                    string artistename = tfile.Tag.AlbumArtists.First() == "Various Artists" || string.IsNullOrEmpty(tfile.Tag.AlbumArtists.First()) ? tfile.Tag.FirstPerformer : tfile.Tag.AlbumArtists.First();
-                    DeezerArtiste artiste = await GetArtiste(artistename, artfolderfiles);
-                    DeezerAlbum album = await GetAlbum(albumname, tfile, compilfolder);
-                    DeezerPlaylist playlist = await GetPlaylist(albumname, compilfolder);
-                    DeezerSong song = new DeezerSong();
-                    song.Album = album.Name;
-                    song.AlbumId = album.Id;
-                    song.ArtisteId = artiste.Id;
-                    song.Artiste = artiste.Name;
-                    song.PlaylistId = playlist.Id;
-                    song.Piste = (int)Piste;
-                    song.Path = mp3file;
-                    song.Title = title;
-                    song.Cover = album.Cover;
-                    context.DeezerSongs.Add(song);
+                    if (!context.DeezerSongs.GetAll().Any(x=>x.Path == mp3file))
+                    {
+                        var tfile = TagLib.File.Create(mp3file);
+                        string title = tfile.Tag.Title;
+                        uint Piste = tfile.Tag.Track;
+                        string albumname = tfile.Tag.Album;
+                        string artistename = tfile.Tag.FirstPerformer;
+                        //string artistename = tfile.Tag.AlbumArtists.FirstOrDefault() == "Various Artists" || string.IsNullOrEmpty(tfile.Tag.AlbumArtists.FirstOrDefault()) ? tfile.Tag.FirstPerformer : tfile.Tag.AlbumArtists.FirstOrDefault();
+                        DeezerArtiste artiste = await GetArtiste(artistename, artfolderfiles);
+                        DeezerAlbum album = await GetAlbum(albumname, tfile, compilfolder);
+                        DeezerPlaylist playlist = await GetPlaylist(compilfolder);
+                        DeezerSong song = new DeezerSong();
+                        song.Album = album.Name;
+                        song.AlbumId = album.Id;
+                        song.ArtisteId = artiste.Id;
+                        song.Artiste = artiste.Name;
+                        song.PlaylistId = playlist.Id;
+                        song.Piste = (int)Piste;
+                        song.Path = mp3file;
+                        song.Title = title;
+                        song.Cover = album.Cover;
+                        context.DeezerSongs.Add(song); 
+                    }
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                { }
             }
         }
 
         private async Task<DeezerArtiste> GetArtiste(string artistename,IEnumerable<string> artfolderfiles)
         {
             var art = context.DeezerArtistes.Find(x => x.Name == artistename);
-            if (art != null)
+            if (art == null || art.Count() >0)
                 return art.FirstOrDefault();
             else
             {
                 DeezerArtiste artiste = new DeezerArtiste();
                 artiste.Name = artistename;
-                var folderpath = artfolderfiles.FirstOrDefault(x => x.Contains(Path.Combine(artiste.Name,"folder.jpg")));
+                var folderpath = artfolderfiles.FirstOrDefault(x => x.Contains(Path.Combine(artiste.Name,"folder.jpg"),StringComparison.OrdinalIgnoreCase));
+                artiste.Cover = string.Empty;
                 if(!string.IsNullOrEmpty(folderpath))
                 {
                     var SourceCover = folderpath;
@@ -136,12 +142,13 @@ namespace FPIMusic.Services.Scan.Implémentation
 
         private async Task<DeezerAlbum> GetAlbum(string albumname, TagLib.File tfile, string compilfolder)
         {
-            var art = context.DeezerAlbums.Find(x => x.Name == albumname);
-            if (art != null)
+            var art = context.DeezerAlbums.Find(x => x.Name.ToUpper()==albumname.ToUpper());
+            if (art == null || art.Count() > 0)
                 return art.FirstOrDefault();
             else
             {
                 DeezerAlbum album = new DeezerAlbum();
+                album.Cover = string.Empty;
                 if (tfile.Tag.Pictures.Length > 0)
                 {
                     try
@@ -162,15 +169,15 @@ namespace FPIMusic.Services.Scan.Implémentation
             }
         }
 
-        private async Task<DeezerPlaylist> GetPlaylist(string playlistname, string compilfolder)
+        private async Task<DeezerPlaylist> GetPlaylist( string compilfolder)
         {
-            var alb = context.DeezerPlaylists.Find(x => x.Name == playlistname);
-            if (alb != null)
+            var alb = context.DeezerPlaylists.Find(x =>x.Name.ToUpper() == new DirectoryInfo(compilfolder).Name.ToUpper());
+            if (alb == null || alb.Count() > 0)
                 return alb.FirstOrDefault();
             else
             {
                 DeezerPlaylist playlist = new DeezerPlaylist();
-                playlist.Name = playlistname;
+                playlist.Name = new DirectoryInfo(compilfolder).Name;
                 playlist.Cover = Path.Combine(compilfolder, "cover.jpg");
                 playlist = context.DeezerPlaylists.Add(playlist);
                 return playlist;

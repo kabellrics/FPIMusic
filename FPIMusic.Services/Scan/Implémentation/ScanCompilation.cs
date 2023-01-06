@@ -76,40 +76,43 @@ namespace FPIMusic.Services.Scan.Implémentation
             var mp3files = Directory.EnumerateFiles(compilfolder, "*.mp3", SearchOption.TopDirectoryOnly);
             foreach (var mp3file in mp3files)
             {
-                try
+                if (!context.DeezerSongs.GetAll().Any(x => x.Path == mp3file))
                 {
-                    var tfile = TagLib.File.Create(mp3file);
-                    string title = tfile.Tag.Title;
-                    uint Piste = tfile.Tag.Track;
-                    string albumname = tfile.Tag.Album;
-                    string artistename = string.Join(", ", tfile.Tag.AlbumArtists);
-                    CompilationArtiste artiste = await GetArtiste(artistename);
-                    CompilationAlbum album = await GetAlbum(albumname, compilfolder);
-                    CompilationSong song = new CompilationSong();
-                    song.Album = album.Name;
-                    song.AlbumId = album.Id;
-                    song.ArtisteId = artiste.Id;
-                    song.Artiste = artiste.Name;
-                    song.Piste = (int)Piste;
-                    song.Path = mp3file;
-                    song.Title = title;
-                    song.Cover = album.Cover;
-                    context.CompilationSongs.Add(song);
+                    try
+                    {
+                        var tfile = TagLib.File.Create(mp3file);
+                        string title = tfile.Tag.Title;
+                        uint Piste = tfile.Tag.Track;
+                        string albumname = tfile.Tag.Album;
+                        string artistename = tfile.Tag.FirstPerformer;
+                        CompilationArtiste artiste = await GetArtiste(artistename);
+                        CompilationAlbum album = await GetAlbum(albumname, compilfolder);
+                        CompilationSong song = new CompilationSong();
+                        song.Album = album.Name;
+                        song.AlbumId = album.Id;
+                        song.ArtisteId = artiste.Id;
+                        song.Artiste = artiste.Name;
+                        song.Piste = (int)Piste;
+                        song.Path = mp3file;
+                        song.Title = title;
+                        song.Cover = album.Cover;
+                        context.CompilationSongs.Add(song);
+                    }
+                    catch (Exception ex) { }
                 }
-                catch (Exception ex) { }
             }
         }
 
         private async Task<CompilationAlbum> GetAlbum(string albumname, string compilfolder)
         {
-            var alb = context.CompilationAlbums.Find(x => x.Name == albumname);
-            if (alb != null)
+            var alb = context.CompilationAlbums.Find(x =>x.Name.ToUpper() == albumname.ToUpper());
+            if (alb == null || alb.Count() > 0)
                 return alb.FirstOrDefault();
             else
             {
                 CompilationAlbum album = new CompilationAlbum();
                 album.Name = albumname;
-                album.Cover = Path.Combine(Path.Combine(settings.CompilationPath.Value, "AlbumCover"), "cover.jpg");
+                album.Cover = Path.Combine(compilfolder, $"cover.jpg");
                 album = context.CompilationAlbums.Add(album);
                 return album;
             }
@@ -117,13 +120,13 @@ namespace FPIMusic.Services.Scan.Implémentation
 
         private async Task<CompilationArtiste> GetArtiste(string artistename)
         {
-            var art = context.CompilationArtistes.Find(x => x.Name == artistename);
-            if (art != null)
+            var art = context.CompilationArtistes.Find(x =>x.Name.ToUpper() == artistename.ToUpper());
+            if (art == null || art.Count() > 0)
                 return art.FirstOrDefault();
             else
             {
                 CompilationArtiste artiste = new CompilationArtiste();
-                artiste.Name = artistename;
+                artiste.Name = artistename; artiste.Cover = string.Empty;
                 artiste = context.CompilationArtistes.Add(artiste);
                 return artiste;
             }

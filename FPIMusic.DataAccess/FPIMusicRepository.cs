@@ -27,7 +27,8 @@ namespace FPIMusic.DataAccess
         public DbSet<DBParameter> Parametre { get; set; }
         public string DbPath { get; }
 
-        public FPIMusicRepository()
+        public FPIMusicRepository(DbContextOptions<FPIMusicRepository> options)
+        : base(options)
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Path.Combine(Environment.GetFolderPath(folder),"FPIMusic");
@@ -39,12 +40,12 @@ namespace FPIMusic.DataAccess
         // The following configures EF to create a Sqlite database file in the
         // special "local" folder for your platform.
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"Data Source={DbPath}");
-        //{
-        //options.UseSqlite("Filename=bookzilla.db");
-        //options.UseSqlite("Data Source=bookzilla.db");
-        //Database.EnsureCreated();
-        //}
+        //=> options.UseSqlite($"Data Source={DbPath}");
+        {
+            //options.UseSqlite("Filename=FPIMusic.db");
+            //options.UseSqlite("Data Source=FPIMusic.db");
+            //Database.EnsureCreated();
+        }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<CompilationSong>()

@@ -1,3 +1,4 @@
+using FPIMusic;
 using FPIMusic.DataAccess;
 using FPIMusic.Services;
 using FPIMusic.Services.Settings;
@@ -16,7 +17,7 @@ builder.Services.AddCors(options =>
         });
 });
 // Add services to the container.
-builder.Services.AddDbContext<FPIMusicRepository>();
+builder.Services.AddDbContext<FPIMusicRepository>(options => options.UseSqlite("Data Source = FPIMusic.db"));
 builder.Services.AddTransient<ISettingsRepository, SettingsRepository>();
 builder.Services.AddTransient<ISettingService, SettingService>();
 builder.Services.AddTransient<IRepoUnit, RepoUnit>();
@@ -28,11 +29,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
+var appInitializator = new AppInitializator();
+appInitializator.CreateDbIfNotExists(app);
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
+app.UseSwagger();
     app.UseSwaggerUI();
 //}
 app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.All });

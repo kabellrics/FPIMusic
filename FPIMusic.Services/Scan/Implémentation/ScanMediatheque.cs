@@ -63,7 +63,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                 if (File.Exists(Path.Combine(artfolder, "folder.jpg")))
                 {
                     var directoryname = new DirectoryInfo(artfolder).Name;
-                    if (context.MediathequeArtistes.Find(x=>x.Name == directoryname).Count() ==0)
+                    if (context.MediathequeArtistes.Find(x=>x.Name.ToUpper() == directoryname.ToUpper()).Count() ==0)
                     {
                         MediathequeArtiste artiste = new MediathequeArtiste();
                         artiste.Name = directoryname;
@@ -87,7 +87,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                 if (File.Exists(Path.Combine( albfolder, "cover.jpg")))
                 {
                     var directoryname = new DirectoryInfo(albfolder).Name;
-                    if (context.MediathequeAlbums.Find(x => x.Name == directoryname).Count() == 0)
+                    if (context.MediathequeAlbums.Find(x => x.Name.ToUpper() == directoryname.ToUpper()).Count() == 0)
                     {
                         MediathequeAlbum album = new MediathequeAlbum();
                         album.Name = directoryname;
@@ -98,7 +98,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                     }
                     else
                     {
-                        await SearchForMediathequeSong(artiste, context.MediathequeAlbums.Find(x => x.Name == directoryname).First());
+                        await SearchForMediathequeSong(artiste, context.MediathequeAlbums.Find(x =>string.Equals(x.Name,directoryname, StringComparison.OrdinalIgnoreCase)).First());
                     }
                 }
             }
