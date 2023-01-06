@@ -98,7 +98,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                     }
                     else
                     {
-                        await SearchForMediathequeSong(artiste, context.MediathequeAlbums.Find(x =>string.Equals(x.Name,directoryname, StringComparison.OrdinalIgnoreCase)).First());
+                        await SearchForMediathequeSong(artiste, context.MediathequeAlbums.Find(x =>x.Name.ToUpper() == directoryname.ToUpper()).First());
                     }
                 }
             }
@@ -109,22 +109,26 @@ namespace FPIMusic.Services.Scan.Implémentation
             var mp3files = Directory.EnumerateFiles(Path.GetDirectoryName(album.Cover), "*.mp3", SearchOption.TopDirectoryOnly);
             foreach (var mp3file in mp3files)
             {
-                try
+                if (!context.MediathequeSongs.GetAll().Any(x => x.Path == mp3file))
                 {
-                    var tfile = TagLib.File.Create(mp3file);
-                    string title = tfile.Tag.Title;
-                    uint Piste = tfile.Tag.Track;
-                    MediathequeSong song = new MediathequeSong();
-                    song.Artiste = artiste.Name;
-                    song.Album = album.Name;
-                    song.AlbumId = album.Id;
-                    song.Piste = (int)Piste;
-                    song.Title = title;
-                    song.Cover = album.Cover;
-                    song.Path = mp3file;
-                    context.MediathequeSongs.Add(song);
+
+                    try
+                    {
+                        var tfile = TagLib.File.Create(mp3file);
+                        string title = tfile.Tag.Title;
+                        uint Piste = tfile.Tag.Track;
+                        MediathequeSong song = new MediathequeSong();
+                        song.Artiste = artiste.Name;
+                        song.Album = album.Name;
+                        song.AlbumId = album.Id;
+                        song.Piste = (int)Piste;
+                        song.Title = title;
+                        song.Cover = album.Cover;
+                        song.Path = mp3file;
+                        context.MediathequeSongs.Add(song);
+                    }
+                    catch (Exception ex) { }
                 }
-                catch(Exception ex) { }
             }
         }
     }

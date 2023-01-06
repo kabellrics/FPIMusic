@@ -24,7 +24,11 @@ namespace FPIMusic.Services.Compilation.Implementation
         }
         private CompilExtendedAlbum CreateExtended(CompilationAlbum alb)
         {
-            CompilExtendedAlbum extalb = (CompilExtendedAlbum)alb;
+            CompilExtendedAlbum extalb = new CompilExtendedAlbum();// (CompilExtendedAlbum)alb;
+            extalb.Id = alb.Id;
+            extalb.Name = alb.Name;
+            extalb.Cover = alb.Cover;
+            extalb.AutoPlaylistElementType = alb.AutoPlaylistElementType;
             var songs = context.CompilationSongs.Find(x => x.AlbumId == extalb.Id);
             extalb.NbSong = songs.Count();
             extalb.NbArtiste = songs.GroupBy(x=>x.ArtisteId).Count();

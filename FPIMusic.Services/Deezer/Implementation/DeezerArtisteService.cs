@@ -25,7 +25,11 @@ namespace FPIMusic.Services.Deezer.Implementation
         }
         private DeezerExtendedArtiste CreateExtended(DeezerArtiste art)
         {
-            DeezerExtendedArtiste extart = (DeezerExtendedArtiste)art;
+            DeezerExtendedArtiste extart = new DeezerExtendedArtiste();// (DeezerExtendedArtiste)art;
+            extart.AutoPlaylistElementType = art.AutoPlaylistElementType;
+            extart.Cover = art.Cover;
+            extart.Name = art.Name;
+            extart.Id = art.Id;
             var songs = context.DeezerSongs.Find(x => x.AlbumId == extart.Id);
             extart.NbSong = songs.Count();
             extart.NbAlbum = songs.GroupBy(x => x.AlbumId).Count();

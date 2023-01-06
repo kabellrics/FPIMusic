@@ -25,7 +25,11 @@ namespace FPIMusic.Services.Mediatheque.Implementation
         }
         private MediaExtendedArtiste CreateExtended(MediathequeArtiste art)
         {
-            MediaExtendedArtiste extart = (MediaExtendedArtiste)art;
+            MediaExtendedArtiste extart = new MediaExtendedArtiste(); // (MediaExtendedArtiste)art;
+            extart.Id = art.Id;
+            extart.AutoPlaylistElementType = art.AutoPlaylistElementType;
+            extart.Cover = art.Cover;
+            extart.Name = art.Name;
             var albs = context.MediathequeAlbums.Find(x => x.MediathequeArtisteID == extart.Id);
             extart.NbAlbum = albs.Count();
             extart.NbSong = context.MediathequeSongs.Find(x=> albs.Select(x=>x.Id).Contains(x.AlbumId)).Count();
@@ -47,11 +51,12 @@ namespace FPIMusic.Services.Mediatheque.Implementation
         {
             return context.MediathequeArtistes.GetAll().Select(x => CreateExtended(x));
         }
-        public IEnumerable<IGrouping<char, MediaExtendedArtiste>> GetGrouped()
+        public IEnumerable<IGrouping<string, MediaExtendedArtiste>> GetGrouped()
         {
             var albs = context.MediathequeArtistes.GetAll();
-            return from alb in albs
-                   group CreateExtended(alb) by alb.Name[0];
+            var grps = from alb in albs
+                   group CreateExtended(alb) by alb.Name[0].ToString();
+            return grps;
         }
     }
 }

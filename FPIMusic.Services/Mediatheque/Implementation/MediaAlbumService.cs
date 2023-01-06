@@ -25,7 +25,12 @@ namespace FPIMusic.Services.Mediatheque.Implementation
         }
         private MediaExtendedAlbum CreateExtended(MediathequeAlbum art)
         {
-            MediaExtendedAlbum extart = (MediaExtendedAlbum)art;
+            MediaExtendedAlbum extart = new MediaExtendedAlbum();//(MediaExtendedAlbum)art;
+            extart.MediathequeArtisteID = art.MediathequeArtisteID;
+            extart.Cover = art.Cover;
+            extart.AutoPlaylistElementType = art.AutoPlaylistElementType;
+            extart.Id = art.Id;
+            extart.Name = art.Name;
             extart.NbSong = context.MediathequeSongs.Find(x => x.AlbumId == extart.Id).Count();
             return extart;
         }
