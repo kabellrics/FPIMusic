@@ -1,4 +1,5 @@
 ﻿using FPIMusic.Models.Compilation;
+using FPIMusic.Services.Mediatheque.ExtendedObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,10 @@ namespace FPIMusic.Services.Compilation.ExtendedObject
     {
         public int NbSong { get; set; }
         public int NbArtiste { get; set; }
+    }
+    public class GroupedCompilExtendedAlbum
+    {
+        public string Key { get; set; }
+        public IEnumerable<CompilExtendedAlbum> Items { get; set; }
     }
 }

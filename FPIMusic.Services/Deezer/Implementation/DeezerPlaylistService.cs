@@ -4,6 +4,7 @@ using FPIMusic.Models.Deezer;
 using FPIMusic.Services.Compilation.ExtendedObject;
 using FPIMusic.Services.Deezer.ExtendeObject;
 using FPIMusic.Services.Deezer.Interface;
+using FPIMusic.Services.Mediatheque.ExtendedObject;
 using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
@@ -52,11 +53,12 @@ namespace FPIMusic.Services.Deezer.Implementation
         {
             return context.DeezerPlaylists.GetAll().Select(x => CreateExtended(x));
         }
-        public IEnumerable<IGrouping<char, DeezerExtendedPlaylist>> GetGrouped()
+        public IEnumerable<GroupedDeezerExtendedPlaylist> GetGrouped()
         {
             var albs = context.DeezerPlaylists.GetAll();
-            return from alb in albs
-                   group CreateExtended(alb) by alb.Name[0];
+            return albs.Select(x => CreateExtended(x)).GroupBy(x => x.Name[0])
+                .Select(x => new GroupedDeezerExtendedPlaylist { Key = x.Key.ToString().ToUpper(), Items = x.ToList() });
+
         }
     }
 }

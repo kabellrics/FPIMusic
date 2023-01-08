@@ -14,6 +14,6 @@ namespace FPIMusic.Services.Compilation.Interface
         CompilExtendedAlbum GetById(int id);
         IEnumerable<CompilExtendedAlbum> GetByName(string name);
         IEnumerable<CompilExtendedAlbum> GetAll();
-        IEnumerable<IGrouping<char, CompilExtendedAlbum>> GetGrouped();
+        IEnumerable<GroupedCompilExtendedAlbum> GetGrouped();
     }
 }

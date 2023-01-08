@@ -21,15 +21,15 @@ namespace FPIMusic.Services.Deezer
             _settings = settings;
             Albums = new DeezerAlbumService(_context, _settings);
             Artistes = new DeezerArtisteService(_context, _settings);
-            Playlist = new DeezerPlaylistService(_context, _settings);
-            Song = new DeezerSongService(_context, _settings);
+            Playlists = new DeezerPlaylistService(_context, _settings);
+            Songs = new DeezerSongService(_context, _settings);
         }
         public IDeezerAlbumService Albums { get; private set; }
 
         public IDeezerArtisteService Artistes { get; private set; }
 
-        public IDeezerPlaylistService Playlist { get; private set; }
+        public IDeezerPlaylistService Playlists { get; private set; }
 
-        public IDeezerSongService Song { get; private set; }
+        public IDeezerSongService Songs { get; private set; }
     }
 }

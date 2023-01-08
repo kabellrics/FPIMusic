@@ -12,7 +12,7 @@ namespace FPIMusic.Services.Deezer
     {
         IDeezerAlbumService Albums { get; }
         IDeezerArtisteService Artistes { get; }
-        IDeezerPlaylistService Playlist { get; }
-        IDeezerSongService Song { get; }
+        IDeezerPlaylistService Playlists { get; }
+        IDeezerSongService Songs { get; }
     }
 }

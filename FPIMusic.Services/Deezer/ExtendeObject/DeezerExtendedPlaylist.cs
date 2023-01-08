@@ -1,4 +1,5 @@
 ﻿using FPIMusic.Models.Deezer;
+using FPIMusic.Services.Mediatheque.ExtendedObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,10 @@ namespace FPIMusic.Services.Deezer.ExtendeObject
         public int NbSong { get; set; }
         public int NbAlbum { get; set; }
         public int NbArtiste { get; set; }
+    }
+    public class GroupedDeezerExtendedPlaylist
+    {
+        public string Key { get; set; }
+        public IEnumerable<DeezerExtendedPlaylist> Items { get; set; }
     }
 }

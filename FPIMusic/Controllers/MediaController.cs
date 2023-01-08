@@ -16,7 +16,8 @@ namespace FPIMusic.Controllers
         {
             _Service = Service;
         }
-        [HttpPut("{id}")]
+        #region Artiste
+        [HttpPut("Artiste/{id}")]
         public ActionResult Put(int id, [FromBody] MediathequeArtiste todoItem)
         {
             if (id != todoItem.Id)
@@ -41,7 +42,7 @@ namespace FPIMusic.Controllers
             _Service.Mediatheque.Artistes.GetAll());
         }
         [HttpGet("GroupedArtiste")]
-        public async Task<ActionResult<IEnumerable<IGrouping<char, MediaExtendedArtiste>>>> GetGroupedArtiste()
+        public async Task<ActionResult<IEnumerable<GroupedMediaExtendedArtiste>>> GetGroupedArtiste()
         {
             return Ok(
             _Service.Mediatheque.Artistes.GetGrouped());
@@ -58,5 +59,72 @@ namespace FPIMusic.Controllers
             return Ok(
             _Service.Mediatheque.Artistes.GetByName(name));
         }
+        #endregion
+
+        #region Albums
+        [HttpPut("Album/{id}")]
+        public ActionResult Put(int id, [FromBody] MediathequeAlbum todoItem)
+        {
+            if (id != todoItem.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                return Ok(_Service.Mediatheque.Albums.Update(todoItem));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            return NoContent();
+        }
+        [HttpGet("Album")]
+        public async Task<ActionResult<IEnumerable<MediaExtendedAlbum>>> GetAlbum()
+        {
+            return Ok(
+            _Service.Mediatheque.Albums.GetAll());
+        }
+        [HttpGet("GroupedAlbum")]
+        public async Task<ActionResult<IEnumerable<GroupedMediaExtendedAlbum>>> GetGroupedAlbum()
+        {
+            return Ok(
+            _Service.Mediatheque.Albums.GetGrouped());
+        }
+        [HttpGet("Album/{id}")]
+        public async Task<ActionResult<MediaExtendedAlbum>> GetAlbum(int id)
+        {
+            return Ok(
+            _Service.Mediatheque.Albums.GetById(id));
+        }
+        [HttpGet("AlbumByArtiste{id}")]
+        public async Task<ActionResult<IEnumerable<GroupedMediaExtendedAlbum>>> GetAlbumByArtiste(int id)
+        {
+            return Ok(
+            _Service.Mediatheque.Albums.GetByArtiste(id));
+        }
+        [HttpGet("Album/{name}")]
+        public async Task<ActionResult<IEnumerable<MediaExtendedAlbum>>> GetAlbum(string name)
+        {
+            return Ok(
+            _Service.Mediatheque.Albums.GetByName(name));
+        }
+        #endregion
+
+        #region Song
+        [HttpGet("Song/{id}")]
+        public async Task<ActionResult<MediathequeSong>> GetSong(int id)
+        {
+            return Ok(
+            _Service.Mediatheque.Song.GetById(id));
+        }
+        [HttpGet("SongByAlbum/{id}")]
+        public async Task<ActionResult<IEnumerable<MediathequeSong>>> GetSongByAlbum(int id)
+        {
+            return Ok(
+            _Service.Mediatheque.Song.GetByAlbumId(id));
+        }
+        #endregion
     }
 }

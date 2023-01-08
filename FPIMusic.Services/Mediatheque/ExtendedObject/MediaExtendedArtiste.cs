@@ -12,4 +12,10 @@ namespace FPIMusic.Services.Mediatheque.ExtendedObject
         public int NbSong { get; set; }
         public int NbAlbum { get; set; }
     }
+    public class GroupedMediaExtendedArtiste
+    {
+        public string Key { get; set; }
+        public IEnumerable<MediaExtendedArtiste> Items { get; set; }
+    }
+    
 }

@@ -9,8 +9,8 @@ namespace FPIMusic.Services.Compilation
 {
     public class ICompilationService
     {
-        ICompilAlbumService Albums { get; }
-        ICompilArtisteService Artistes { get; }
-        ICompilSongService Song { get; }
+        public ICompilAlbumService Albums { get; }
+        public ICompilArtisteService Artistes { get; }
+        public ICompilSongService Song { get; }
     }
 }

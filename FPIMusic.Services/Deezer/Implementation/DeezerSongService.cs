@@ -39,5 +39,9 @@ namespace FPIMusic.Services.Deezer.Implementation
         {
             return context.DeezerSongs.Find(x => x.AlbumId == id).OrderBy(x => x.Piste); ;
         }
+        public IEnumerable<DeezerSong> GetByPlaylistid(int id)
+        {
+            return context.DeezerSongs.Find(x => x.PlaylistId == id).OrderBy(x => x.Piste); ;
+        }
     }
 }

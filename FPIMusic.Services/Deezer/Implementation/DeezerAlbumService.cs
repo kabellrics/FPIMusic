@@ -52,11 +52,11 @@ namespace FPIMusic.Services.Deezer.Implementation
         {
             return context.DeezerAlbums.GetAll().Select(x => CreateExtended(x));
         }
-        public IEnumerable<IGrouping<char, DeezerExtendedAlbum>> GetGrouped()
+        public IEnumerable<GroupedDeezerExtendedAlbum> GetGrouped()
         {
             var albs = context.DeezerAlbums.GetAll();
-            return from alb in albs
-                   group CreateExtended(alb) by alb.Name[0];
+            return albs.Select(x => CreateExtended(x)).GroupBy(x => x.Name[0])
+                .Select(x => new GroupedDeezerExtendedAlbum { Key = x.Key.ToString().ToUpper(), Items = x.ToList() });
         }
     }
 }

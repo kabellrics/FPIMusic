@@ -14,6 +14,6 @@ namespace FPIMusic.Services.Deezer.Interface
         DeezerExtendedPlaylist GetById(int id);
         IEnumerable<DeezerExtendedPlaylist> GetByName(string name);
         IEnumerable<DeezerExtendedPlaylist> GetAll();
-        IEnumerable<IGrouping<char, DeezerExtendedPlaylist>> GetGrouped();
+        IEnumerable<GroupedDeezerExtendedPlaylist> GetGrouped();
     }
 }

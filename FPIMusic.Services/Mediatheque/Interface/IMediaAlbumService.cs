@@ -15,6 +15,6 @@ namespace FPIMusic.Services.Mediatheque.Interface
         IEnumerable<MediaExtendedAlbum> GetByArtiste(int id);
         IEnumerable<MediaExtendedAlbum> GetByName(string name);
         IEnumerable<MediaExtendedAlbum> GetAll();
-        IEnumerable<IGrouping<char, MediaExtendedAlbum>> GetGrouped();
+        IEnumerable<GroupedMediaExtendedAlbum> GetGrouped();
     }
 }

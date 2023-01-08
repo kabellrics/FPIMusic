@@ -2,6 +2,7 @@
 using FPIMusic.Models.Compilation;
 using FPIMusic.Services.Compilation.ExtendedObject;
 using FPIMusic.Services.Compilation.Interface;
+using FPIMusic.Services.Deezer.ExtendeObject;
 using FPIMusic.Services.Settings;
 using System;
 using System.Collections.Generic;
@@ -49,11 +50,11 @@ namespace FPIMusic.Services.Compilation.Implementation
         {
             return context.CompilationArtistes.GetAll().Select(x => CreateExtended(x));
         }
-        public IEnumerable<IGrouping<char, CompilExtendedArtiste>> GetGrouped()
+        public IEnumerable<GroupedCompilExtendedArtiste> GetGrouped()
         {
             var arts = context.CompilationArtistes.GetAll();
-            return from art in arts
-                   group CreateExtended(art) by art.Name[0];
+            return arts.Select(x => CreateExtended(x)).GroupBy(x => x.Name[0])
+                .Select(x => new GroupedCompilExtendedArtiste { Key = x.Key.ToString().ToUpper(), Items = x.ToList() });
         }
     }
 }

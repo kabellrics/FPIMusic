@@ -51,12 +51,11 @@ namespace FPIMusic.Services.Mediatheque.Implementation
         {
             return context.MediathequeArtistes.GetAll().Select(x => CreateExtended(x));
         }
-        public IEnumerable<IGrouping<string, MediaExtendedArtiste>> GetGrouped()
+        public IEnumerable<GroupedMediaExtendedArtiste> GetGrouped()
         {
             var albs = context.MediathequeArtistes.GetAll();
-            var grps = from alb in albs
-                   group CreateExtended(alb) by alb.Name[0].ToString();
-            return grps;
+            return albs.Select(x => CreateExtended(x)).GroupBy(x => x.Name[0])
+                .Select(x => new GroupedMediaExtendedArtiste { Key = x.Key.ToString().ToUpper(), Items = x.ToList() });
         }
     }
 }

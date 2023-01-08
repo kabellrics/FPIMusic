@@ -13,5 +13,6 @@ namespace FPIMusic.Services.Deezer.Interface
         DeezerSong GetById(int id);
         IEnumerable<DeezerSong> GetByArtisteId(int id);
         IEnumerable<DeezerSong> GetByAlbumId(int id);
+        IEnumerable<DeezerSong> GetByPlaylistid(int id);
     }
 }
