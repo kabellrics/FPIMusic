@@ -55,7 +55,7 @@ namespace FPIMusic.Services.Mediatheque.Implementation
         {
             var albs = context.MediathequeArtistes.GetAll();
             return albs.Select(x => CreateExtended(x)).GroupBy(x => x.Name[0])
-                .Select(x => new GroupedMediaExtendedArtiste { Key = x.Key.ToString().ToUpper(), Items = x.ToList() });
+                .Select(x => new GroupedMediaExtendedArtiste { Key = x.Key.ToString().ToUpper(), Items = x.ToList().OrderBy(x => x.Name) }).OrderBy(x=>x.Key);
         }
     }
 }

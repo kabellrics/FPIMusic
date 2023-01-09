@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace FPIMusic.Services.Compilation
 {
-    public class ICompilationService
+    public interface ICompilationService
     {
-        public ICompilAlbumService Albums { get; }
-        public ICompilArtisteService Artistes { get; }
-        public ICompilSongService Song { get; }
+        ICompilAlbumService Albums { get; }
+        ICompilArtisteService Artistes { get; }
+        ICompilSongService Song { get; }
     }
 }

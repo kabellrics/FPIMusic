@@ -54,7 +54,7 @@ namespace FPIMusic.Services.Compilation.Implementation
         {
             var arts = context.CompilationArtistes.GetAll();
             return arts.Select(x => CreateExtended(x)).GroupBy(x => x.Name[0])
-                .Select(x => new GroupedCompilExtendedArtiste { Key = x.Key.ToString().ToUpper(), Items = x.ToList() });
+                .Select(x => new GroupedCompilExtendedArtiste { Key = x.Key.ToString().ToUpper(), Items = x.ToList().OrderBy(x => x.Name) }).OrderBy(x => x.Key);
         }
     }
 }

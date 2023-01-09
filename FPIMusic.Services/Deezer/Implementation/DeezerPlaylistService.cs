@@ -57,7 +57,7 @@ namespace FPIMusic.Services.Deezer.Implementation
         {
             var albs = context.DeezerPlaylists.GetAll();
             return albs.Select(x => CreateExtended(x)).GroupBy(x => x.Name[0])
-                .Select(x => new GroupedDeezerExtendedPlaylist { Key = x.Key.ToString().ToUpper(), Items = x.ToList() });
+                .Select(x => new GroupedDeezerExtendedPlaylist { Key = x.Key.ToString().ToUpper(), Items = x.ToList().OrderBy(x => x.Name) }).OrderBy(x => x.Key);
 
         }
     }
