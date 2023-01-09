@@ -21,4 +21,8 @@
     <ProjectReference Include="..\FPIMusic.Services\FPIMusic.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Assets\" />
+  </ItemGroup>
+
 </Project>
