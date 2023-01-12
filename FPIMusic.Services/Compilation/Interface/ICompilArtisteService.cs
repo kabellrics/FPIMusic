@@ -15,5 +15,7 @@ namespace FPIMusic.Services.Compilation.Interface
         IEnumerable<CompilExtendedArtiste> GetByName(string name);
         IEnumerable<CompilExtendedArtiste> GetAll();
         IEnumerable<GroupedCompilExtendedArtiste> GetGrouped();
+        IEnumerable<CompilExtendedArtiste> GetMostSongArtiste();
+        IEnumerable<CompilExtendedArtiste> GetMostAlbumArtiste();
     }
 }

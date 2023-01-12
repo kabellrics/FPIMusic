@@ -15,5 +15,8 @@ namespace FPIMusic.Services.Deezer.Interface
         IEnumerable<DeezerExtendedArtiste> GetByName(string name);
         IEnumerable<DeezerExtendedArtiste> GetAll();
         IEnumerable<GroupedDeezerExtendedArtiste> GetGrouped();
+        IEnumerable<DeezerExtendedArtiste> GetMostSongArtiste();
+        IEnumerable<DeezerExtendedArtiste> GetMostPlaylistArtiste();
+        IEnumerable<DeezerExtendedArtiste> GetMostAlbumArtiste();
     }
 }

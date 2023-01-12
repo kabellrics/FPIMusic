@@ -41,6 +41,18 @@ namespace FPIMusic.Controllers
             return Ok(
             _Service.Mediatheque.Artistes.GetAll());
         }
+        [HttpGet("ArtisteMostAlbum")]
+        public async Task<ActionResult<IEnumerable<MediaExtendedArtiste>>> GetArtisteMostAlbum()
+        {
+            return Ok(
+            _Service.Mediatheque.Artistes.GetMostAlbumArtiste());
+        }
+        [HttpGet("ArtisteMostSong")]
+        public async Task<ActionResult<IEnumerable<MediaExtendedArtiste>>> GetArtisteMostSong()
+        {
+            return Ok(
+            _Service.Mediatheque.Artistes.GetMostSongArtiste());
+        }
         [HttpGet("GroupedArtiste")]
         public async Task<ActionResult<IEnumerable<GroupedMediaExtendedArtiste>>> GetGroupedArtiste()
         {

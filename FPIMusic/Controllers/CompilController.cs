@@ -43,6 +43,18 @@ namespace FPIMusic.Controllers
             return Ok(
             _Service.Compilation.Artistes.GetAll());
         }
+        [HttpGet("ArtisteMostSong")]
+        public async Task<ActionResult<IEnumerable<CompilExtendedArtiste>>> GetArtisteMostSong()
+        {
+            return Ok(
+            _Service.Compilation.Artistes.GetMostSongArtiste());
+        }
+        [HttpGet("ArtisteMostAlbum")]
+        public async Task<ActionResult<IEnumerable<CompilExtendedArtiste>>> GetArtisteMostAlbum()
+        {
+            return Ok(
+            _Service.Compilation.Artistes.GetMostAlbumArtiste());
+        }
         [HttpGet("GroupedArtiste")]
         public async Task<ActionResult<IEnumerable<GroupedCompilExtendedArtiste>>> GetGroupedArtiste()
         {

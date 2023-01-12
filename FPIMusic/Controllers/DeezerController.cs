@@ -42,6 +42,24 @@ namespace FPIMusic.Controllers
             return Ok(
             _Service.Deezer.Artistes.GetAll());
         }
+        [HttpGet("ArtisteMostSong")]
+        public async Task<ActionResult<IEnumerable<DeezerExtendedArtiste>>> GetArtisteMostSong()
+        {
+            return Ok(
+            _Service.Deezer.Artistes.GetMostSongArtiste());
+        }
+        [HttpGet("ArtisteMostPlaylist")]
+        public async Task<ActionResult<IEnumerable<DeezerExtendedArtiste>>> GetMostPlaylist()
+        {
+            return Ok(
+            _Service.Deezer.Artistes.GetMostPlaylistArtiste());
+        }
+        [HttpGet("ArtisteMostAlbum")]
+        public async Task<ActionResult<IEnumerable<DeezerExtendedArtiste>>> GetArtisteMostAlbum()
+        {
+            return Ok(
+            _Service.Deezer.Artistes.GetMostAlbumArtiste());
+        }
         [HttpGet("GroupedArtiste")]
         public async Task<ActionResult<IEnumerable<GroupedDeezerExtendedArtiste>>> GetGroupedArtiste()
         {

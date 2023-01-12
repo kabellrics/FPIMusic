@@ -51,6 +51,14 @@ namespace FPIMusic.Services.Mediatheque.Implementation
         {
             return context.MediathequeArtistes.GetAll().Select(x => CreateExtended(x));
         }
+        public IEnumerable<MediaExtendedArtiste> GetMostAlbumArtiste()
+        {
+            return GetAll().OrderByDescending(x=>x.NbAlbum).ThenByDescending(x => x.NbSong).Take(3);
+        }
+        public IEnumerable<MediaExtendedArtiste> GetMostSongArtiste()
+        {
+            return GetAll().OrderByDescending(x=>x.NbSong).ThenByDescending(x => x.NbAlbum).Take(3);
+        }
         public IEnumerable<GroupedMediaExtendedArtiste> GetGrouped()
         {
             var albs = context.MediathequeArtistes.GetAll();

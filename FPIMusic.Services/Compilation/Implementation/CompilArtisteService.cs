@@ -50,6 +50,14 @@ namespace FPIMusic.Services.Compilation.Implementation
         {
             return context.CompilationArtistes.GetAll().Select(x => CreateExtended(x));
         }
+        public IEnumerable<CompilExtendedArtiste> GetMostSongArtiste()
+        {
+            return GetAll().OrderByDescending(x=>x.NbSong).Take(3);
+        }
+        public IEnumerable<CompilExtendedArtiste> GetMostAlbumArtiste()
+        {
+            return GetAll().OrderByDescending(x=>x.NbAlbum).ThenByDescending(x=>x.NbSong).Take(3);
+        }
         public IEnumerable<GroupedCompilExtendedArtiste> GetGrouped()
         {
             var arts = context.CompilationArtistes.GetAll();

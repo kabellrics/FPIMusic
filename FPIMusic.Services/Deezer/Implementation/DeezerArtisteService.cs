@@ -52,6 +52,18 @@ namespace FPIMusic.Services.Deezer.Implementation
         {
             return context.DeezerArtistes.GetAll().Select(x => CreateExtended(x));
         }
+        public IEnumerable<DeezerExtendedArtiste> GetMostSongArtiste()
+        {
+            return GetAll().OrderByDescending(x=>x.NbSong).ThenByDescending(x => x.NbPlaylist).ThenByDescending(x => x.NbAlbum).Take(3);
+        }
+        public IEnumerable<DeezerExtendedArtiste> GetMostPlaylistArtiste()
+        {
+            return GetAll().OrderByDescending(x=>x.NbPlaylist).ThenByDescending(x => x.NbSong).ThenByDescending(x => x.NbPlaylist).Take(3);
+        }
+        public IEnumerable<DeezerExtendedArtiste> GetMostAlbumArtiste()
+        {
+            return GetAll().OrderByDescending(x=>x.NbAlbum).ThenByDescending(x => x.NbPlaylist).ThenByDescending(x => x.NbSong).Take(3);
+        }
         public IEnumerable<GroupedDeezerExtendedArtiste> GetGrouped()
         {
             var albs = context.DeezerArtistes.GetAll();
