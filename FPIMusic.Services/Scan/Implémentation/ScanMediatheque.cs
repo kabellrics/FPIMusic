@@ -67,7 +67,7 @@ namespace FPIMusic.Services.Scan.Implémentation
                     {
                         MediathequeArtiste artiste = new MediathequeArtiste();
                         artiste.Name = directoryname;
-                        artiste.Cover = Path.Combine(artfolder, "fanart.jpg");
+                        artiste.Cover = Path.Combine(artfolder, "folder.jpg");
                         artiste = context.MediathequeArtistes.Add(artiste);
                         await SearchForMediathequeAlbum(artiste);
                     }
