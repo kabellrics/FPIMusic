@@ -31,7 +31,7 @@ namespace FPIMusic.Services.Deezer.Implementation
             extart.Id = art.Id;
             extart.AutoPlaylistElementType = art.AutoPlaylistElementType;
             extart.Cover = art.Cover;
-            var songs = context.DeezerSongs.Find(x => x.AlbumId == extart.Id);
+            var songs = context.DeezerSongs.Find(x => x.PlaylistId == extart.Id);
             extart.NbSong = songs.Count();
             extart.NbAlbum = songs.GroupBy(x => x.AlbumId).Count();
             extart.NbArtiste = songs.GroupBy(x => x.ArtisteId).Count();
