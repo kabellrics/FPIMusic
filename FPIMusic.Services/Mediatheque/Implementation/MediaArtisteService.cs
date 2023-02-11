@@ -62,7 +62,7 @@ namespace FPIMusic.Services.Mediatheque.Implementation
         public IEnumerable<GroupedMediaExtendedArtiste> GetGrouped()
         {
             var albs = context.MediathequeArtistes.GetAll();
-            return albs.Select(x => CreateExtended(x)).GroupBy(x => x.Name[0])
+            return albs.Select(x => CreateExtended(x)).GroupBy(x => char.IsLetterOrDigit(x.Name[0])?char.IsNumber(x.Name[0])?"0..9": x.Name[0].ToString().ToUpper() :"@..#")
                 .Select(x => new GroupedMediaExtendedArtiste { Key = x.Key.ToString().ToUpper(), Items = x.ToList().OrderBy(x => x.Name) }).OrderBy(x=>x.Key);
         }
     }

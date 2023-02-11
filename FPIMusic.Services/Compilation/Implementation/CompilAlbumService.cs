@@ -54,7 +54,7 @@ namespace FPIMusic.Services.Compilation.Implementation
         public IEnumerable<GroupedCompilExtendedAlbum> GetGrouped()
         {
             var albs = context.CompilationAlbums.GetAll();
-            return albs.Select(x => CreateExtended(x)).GroupBy(x => x.Name[0])
+            return albs.Select(x => CreateExtended(x)).GroupBy(x => char.IsLetterOrDigit(x.Name[0]) ? char.IsNumber(x.Name[0]) ? "0..9" : x.Name[0].ToString().ToUpper() : "@..#")
                 .Select(x => new GroupedCompilExtendedAlbum { Key = x.Key.ToString().ToUpper(), Items = x.ToList().OrderBy(x => x.Name) }).OrderBy(x => x.Key);
         }
     }
