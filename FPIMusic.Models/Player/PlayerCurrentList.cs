@@ -10,20 +10,49 @@ namespace FPIMusic.Models.Player
     public class PlayerCurrentList
     {
         private Queue<Song> SongToPlay;
+        private Queue<Song> ShuffleSongToPlay;
         private Stack<Song> SongPrioritizetoPlay;
         private List<Song> SongAlreadyPlay;
+        private List<Song> ShuffleSongAlreadyPlay;
         private Song CurrentSong;
-        public PlayerCurrentList()
+        private bool _IsShuffle;
+        public bool IsShuffle
         {
-            ReInit();
+            get { return _IsShuffle; }
+            set { _IsShuffle = value; SetShuffleValue(); }
         }
 
+
+        public PlayerCurrentList()
+        {
+            IsShuffle = false;
+            ReInit();
+        }
         public void ReInit()
         {
             SongToPlay = new Queue<Song>();
+            ShuffleSongToPlay = new Queue<Song>();
             SongPrioritizetoPlay = new Stack<Song>();
             SongAlreadyPlay = new List<Song>();
+            ShuffleSongAlreadyPlay = new List<Song>();
             CurrentSong = null;
+        }
+        private void SetShuffleValue()
+        {
+            if(IsShuffle)
+            {
+                var listtoplay = new List<Song>();
+                listtoplay.AddRange(SongAlreadyPlay);
+                foreach (var item in SongToPlay)
+                {
+                    listtoplay.Add(item);
+                }
+                Random rand = new Random();
+                foreach(var item in listtoplay.OrderBy(_ => rand.Next()).ToList())
+                {
+                    ShuffleSongToPlay.Enqueue(item);
+                }
+            }
         }
         public PlayerListStatus GetPlayerListStatus()
         {
@@ -49,7 +78,7 @@ namespace FPIMusic.Models.Player
         {
             SongPrioritizetoPlay.Push(item);
         }
-        public void SongFinishePlay()
+        public void SongFinishedPlay()
         {
             SongAlreadyPlay.Add(CurrentSong);
         }
@@ -62,7 +91,18 @@ namespace FPIMusic.Models.Player
             }
             CurrentSong = SongToPlay.Dequeue();
             return CurrentSong;
-            //return CurrentSong;
+
+        }
+        public Song GetPreviousSongToPlay()
+        {
+            if (SongAlreadyPlay.Any())
+            {
+                AddPrioritizeSong(CurrentSong);
+                var previoussong = SongAlreadyPlay.Last();
+                SongAlreadyPlay.Remove(previoussong);
+                CurrentSong = previoussong; 
+            }
+            return CurrentSong;
 
         }
     }
