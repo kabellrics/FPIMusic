@@ -1,6 +1,7 @@
 using FPIMusic;
 using FPIMusic.DataAccess;
 using FPIMusic.Services;
+using FPIMusic.Services.Player;
 using FPIMusic.Services.Settings;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,7 @@ builder.Services.AddTransient<ISettingService, SettingService>();
 builder.Services.AddTransient<IRepoUnit, RepoUnit>();
 builder.Services.AddTransient<IService, Service>();
 builder.Services.AddTransient<IScanner, Scanner>();
+builder.Services.AddTransient<IPlayerService, PlayerService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
