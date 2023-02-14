@@ -25,11 +25,11 @@ namespace FPIMusic.Models.Player
 
         public PlayerCurrentList()
         {
-            IsShuffle = false;
             ReInit();
         }
         public void ReInit()
         {
+            IsShuffle = false;
             SongToPlay = new Queue<Song>();
             ShuffleSongToPlay = new Queue<Song>();
             SongPrioritizetoPlay = new Stack<Song>();
@@ -39,7 +39,7 @@ namespace FPIMusic.Models.Player
         }
         private void SetShuffleValue()
         {
-            if(IsShuffle)
+            if (IsShuffle)
             {
                 var listtoplay = new List<Song>();
                 listtoplay.AddRange(SongAlreadyPlay);
@@ -48,31 +48,47 @@ namespace FPIMusic.Models.Player
                     listtoplay.Add(item);
                 }
                 Random rand = new Random();
-                foreach(var item in listtoplay.OrderBy(_ => rand.Next()).ToList())
+                foreach (var item in listtoplay.OrderBy(_ => rand.Next()).ToList())
                 {
                     ShuffleSongToPlay.Enqueue(item);
                 }
+            }
+            else
+            {
+                ShuffleSongToPlay = new Queue<Song>();
+                ShuffleSongAlreadyPlay = new List<Song>();
             }
         }
         public PlayerListStatus GetPlayerListStatus()
         {
             var status = new PlayerListStatus();
             status.CurrentSong = CurrentSong;
-            status.SongAlreadyPlay = SongAlreadyPlay;
+            status.SongAlreadyPlay = IsShuffle ? ShuffleSongAlreadyPlay : SongAlreadyPlay;
             status.SongToPlay = new List<Song>();
-            foreach(var item in SongPrioritizetoPlay)
+            foreach (var item in SongPrioritizetoPlay)
             {
                 status.SongToPlay.Add(item);
             }
-            foreach(var item in SongToPlay)
+            if (IsShuffle)
             {
-                status.SongToPlay.Add(item);
+                foreach (var item in ShuffleSongToPlay)
+                {
+                    status.SongToPlay.Add(item);
+                }
+            }
+            else
+            {
+                foreach (var item in SongToPlay)
+                {
+                    status.SongToPlay.Add(item);
+                }
             }
             return status;
         }
         public void AddSong(Song item)
         {
             SongToPlay.Enqueue(item);
+            if (IsShuffle) { ShuffleSongToPlay.Enqueue(item); }
         }
         public void AddPrioritizeSong(Song item)
         {
@@ -81,26 +97,47 @@ namespace FPIMusic.Models.Player
         public void SongFinishedPlay()
         {
             SongAlreadyPlay.Add(CurrentSong);
+            if (IsShuffle) { ShuffleSongAlreadyPlay.Add(CurrentSong); }
         }
         public Song GetNextSongToPlay()
         {
-            if(SongPrioritizetoPlay.Any())
+            if (SongPrioritizetoPlay.Any())
             {
                 CurrentSong = SongPrioritizetoPlay.Pop();
                 return CurrentSong;
             }
-            CurrentSong = SongToPlay.Dequeue();
-            return CurrentSong;
-
+            if (!IsShuffle)
+            {
+                CurrentSong = SongToPlay.Dequeue();
+                return CurrentSong;
+            }
+            else
+            {
+                CurrentSong = ShuffleSongToPlay.Dequeue();
+                return CurrentSong;
+            }
         }
         public Song GetPreviousSongToPlay()
         {
-            if (SongAlreadyPlay.Any())
+            if (!IsShuffle)
             {
-                AddPrioritizeSong(CurrentSong);
-                var previoussong = SongAlreadyPlay.Last();
-                SongAlreadyPlay.Remove(previoussong);
-                CurrentSong = previoussong; 
+                if (SongAlreadyPlay.Any())
+                {
+                    AddPrioritizeSong(CurrentSong);
+                    var previoussong = SongAlreadyPlay.Last();
+                    SongAlreadyPlay.Remove(previoussong);
+                    CurrentSong = previoussong;
+                }
+            }
+            else
+            {
+                if (ShuffleSongAlreadyPlay.Any())
+                {
+                    AddPrioritizeSong(CurrentSong);
+                    var previoussong = ShuffleSongAlreadyPlay.Last();
+                    ShuffleSongAlreadyPlay.Remove(previoussong);
+                    CurrentSong = previoussong;
+                }
             }
             return CurrentSong;
 
@@ -112,6 +149,8 @@ namespace FPIMusic.Models.Player
         public List<Song> SongAlreadyPlay { get; set; }
         public List<Song> SongToPlay { get; set; }
         public Song CurrentSong { get; set; }
+        public bool Playing { get; set; }
+        public bool Pausing { get; set; }
 
     }
 }
