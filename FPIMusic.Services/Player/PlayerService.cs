@@ -25,7 +25,8 @@ namespace FPIMusic.Services.Player
 
         private void Player_PlaybackFinished(object? sender, EventArgs e)
         {
-            this.Play(GetNextSongToPlay());
+            GetNextSongToPlay();
+            this.Play();
         }
 
         public PlayerListStatus GetPlayerListStatus()
@@ -35,46 +36,81 @@ namespace FPIMusic.Services.Player
             status.Playing= Player.Playing;
             return status;
         }
-        public void AddSong(int itemID, SongType SongType)
+        public void PlaySong(int itemID, int songType)
         {
-            if (SongType == SongType.Mediatheque)
+            PlayerCurrentList.ReInit();
+            if ((SongType)songType == SongType.Mediatheque)
             {
                 var item = context.MediathequeSongs.GetById(itemID);
                 PlayerCurrentList.AddSong(item);
             }
-            else if (SongType == SongType.Compilation)
+            else if ((SongType)songType == SongType.Compilation)
             {
                 var item = context.CompilationSongs.GetById(itemID);
                 PlayerCurrentList.AddSong(item);
             }
-            else if (SongType == SongType.Deezer)
+            else if ((SongType)songType == SongType.Deezer)
             {
                 var item = context.DeezerSongs.GetById(itemID);
                 PlayerCurrentList.AddSong(item);
             }
-            if (Player.Playing == false) { this.Play(GetNextSongToPlay()); }
+            this.Play();
         }
-        public void AddPrioritizeSong(int itemID, SongType SongType)
+        public void AddSong(int itemID, int songType)
         {
-            if (SongType == SongType.Mediatheque)
+            if ((SongType)songType == SongType.Mediatheque)
+            {
+                var item = context.MediathequeSongs.GetById(itemID);
+                PlayerCurrentList.AddSong(item);
+            }
+            else if ((SongType)songType == SongType.Compilation)
+            {
+                var item = context.CompilationSongs.GetById(itemID);
+                PlayerCurrentList.AddSong(item);
+            }
+            else if ((SongType)songType == SongType.Deezer)
+            {
+                var item = context.DeezerSongs.GetById(itemID);
+                PlayerCurrentList.AddSong(item);
+            }
+            if (PlayerCurrentList.IsEmpty) { this.Play(); }
+        }
+        public void AddPrioritizeSong(int itemID, int songType)
+        {
+            if ((SongType)songType == SongType.Mediatheque)
             {
                 var item = context.MediathequeSongs.GetById(itemID);
                 PlayerCurrentList.AddPrioritizeSong(item);
             }
-            else if (SongType == SongType.Compilation)
+            else if ((SongType)songType == SongType.Compilation)
             {
                 var item = context.CompilationSongs.GetById(itemID);
                 PlayerCurrentList.AddPrioritizeSong(item);
             }
-            else if (SongType == SongType.Deezer)
+            else if ((SongType)songType == SongType.Deezer)
             {
                 var item = context.DeezerSongs.GetById(itemID);
                 PlayerCurrentList.AddPrioritizeSong(item);
             }
+            if (PlayerCurrentList.IsEmpty) { this.Play(); }
         }
-        public Song GetNextSongToPlay() { return PlayerCurrentList.GetNextSongToPlay(); }
-        public Song GetPreviousSongToPlay() { return PlayerCurrentList.GetPreviousSongToPlay(); }
-        public void Play(Song song) { Player.Play(song.Path); }
+        public void GetNextSongToPlay()
+        {
+            PlayerCurrentList.GetNextSongToPlay();
+            Play();
+        }
+        public void GetPreviousSongToPlay()
+        {
+            PlayerCurrentList.GetPreviousSongToPlay();
+            Play();
+        }
+        public void Play(Song song = null) 
+        {
+            if(song != null)
+                Player.Play(song.Path);
+            else
+                Player.Play(PlayerCurrentList.CurrentSong.Path);
+        }
         public void Pause() { Player.Pause(); }
         public void Resume() { Player.Resume(); }
         public void Stop() { Player.Stop(); }
