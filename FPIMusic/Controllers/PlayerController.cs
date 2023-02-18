@@ -49,12 +49,6 @@ namespace FPIMusic.Controllers
         [HttpGet("Play")]
         public async Task<ActionResult> Play()
         {
-            _playerService.Play();
-            return Ok();
-        }
-        [HttpGet("Resume")]
-        public async Task<ActionResult> Resume()
-        {
             _playerService.Resume();
             return Ok();
         }

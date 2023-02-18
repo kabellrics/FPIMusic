@@ -14,7 +14,7 @@ namespace FPIMusic.Models.Player
         private Stack<Song> SongPrioritizetoPlay;
         private List<Song> SongAlreadyPlay;
         private List<Song> ShuffleSongAlreadyPlay;
-        public Song CurrentSong;
+        public Song CurrentSong { get; set; }
         private bool _IsShuffle;
         public bool IsShuffle
         {
@@ -95,15 +95,8 @@ namespace FPIMusic.Models.Player
             if (IsShuffle)
             {
                 ShuffleSongToPlay.Enqueue(item);
-                if (ShuffleSongToPlay.Count == 1)
-                    GetNextSongToPlay();
             }
-            else
-            {
                 SongToPlay.Enqueue(item);
-                if (SongToPlay.Count == 1)
-                    GetNextSongToPlay();
-            }
         }
         public void AddPrioritizeSong(Song item)
         {
@@ -121,15 +114,18 @@ namespace FPIMusic.Models.Player
                 CurrentSong = SongPrioritizetoPlay.Pop();
                 //return CurrentSong;
             }
-            if (!IsShuffle)
-            {
-                CurrentSong = SongToPlay.Dequeue();
-                //return CurrentSong;
-            }
             else
             {
-                CurrentSong = ShuffleSongToPlay.Dequeue();
-                //return CurrentSong;
+                if (!IsShuffle)
+                {
+                    CurrentSong = SongToPlay.Dequeue();
+                    //return CurrentSong;
+                }
+                else
+                {
+                    CurrentSong = ShuffleSongToPlay.Dequeue();
+                    //return CurrentSong;
+                }
             }
         }
         public void GetPreviousSongToPlay()

@@ -1,6 +1,7 @@
 using FPIMusic;
 using FPIMusic.DataAccess;
 using FPIMusic.Services;
+using FPIMusic.Services.Hub;
 using FPIMusic.Services.Player;
 using FPIMusic.Services.Settings;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,7 @@ app.Use(async (context, next) =>
 app.UseCors(AllowAllHeadersPolicy);
 app.UseStaticFiles();
 app.UseAuthorization();
+app.MapHub<MessageHub>("/synchro");
 
 app.MapControllers();
 
