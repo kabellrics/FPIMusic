@@ -19,12 +19,12 @@ builder.Services.AddCors(options =>
         });
 });
 // Add services to the container.
-builder.Services.AddDbContext<FPIMusicRepository>(options => options.UseSqlite("Data Source = FPIMusic.db"),ServiceLifetime.Singleton);
-builder.Services.AddSingleton<ISettingsRepository, SettingsRepository>();
-builder.Services.AddSingleton<ISettingService, SettingService>();
-builder.Services.AddSingleton<IRepoUnit, RepoUnit>();
-builder.Services.AddSingleton<IService, Service>();
-builder.Services.AddSingleton<IScanner, Scanner>();
+builder.Services.AddDbContext<FPIMusicRepository>(options => options.UseSqlite("Data Source = FPIMusic.db"));
+builder.Services.AddTransient<ISettingsRepository, SettingsRepository>();
+builder.Services.AddTransient<ISettingService, SettingService>();
+builder.Services.AddTransient<IRepoUnit, RepoUnit>();
+builder.Services.AddTransient<IService, Service>();
+builder.Services.AddTransient<IScanner, Scanner>();
 builder.Services.AddSingleton<IPlayerService, PlayerService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

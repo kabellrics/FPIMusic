@@ -2,6 +2,7 @@
 using FPIMusic.Models;
 using FPIMusic.Models.Player;
 using FPIMusic.Services.Hub;
+using FPIMusic.Services.Settings;
 using Microsoft.AspNetCore.SignalR;
 using NetCoreAudio;
 using System;
@@ -15,13 +16,13 @@ namespace FPIMusic.Services.Player
 {
     public class PlayerService : IPlayerService
     {
-        private IRepoUnit context;
+        //private IRepoUnit context;
         private PlayerCurrentList PlayerCurrentList;
         private NetCoreAudio.Player Player;
         private IHubContext<MessageHub, IMessageHubClient> messageHub;
-        public PlayerService(IRepoUnit context, IHubContext<MessageHub, IMessageHubClient> _messageHub)
+        public PlayerService(/*IRepoUnit context,*/ IHubContext<MessageHub, IMessageHubClient> _messageHub)
         {
-            this.context = context;
+            //this.context = context;
             messageHub = _messageHub;
             PlayerCurrentList = new PlayerCurrentList();
             Player = new NetCoreAudio.Player();
@@ -48,62 +49,20 @@ namespace FPIMusic.Services.Player
             status.Playing= Player.Playing;
             return status;
         }
-        public void PlaySong(int itemID, int songType)
+        public void PlaySong(Song item)
         {
             PlayerCurrentList.ReInit();
-            if ((SongType)songType == SongType.Mediatheque)
-            {
-                var item = context.MediathequeSongs.GetById(itemID);
                 PlayerCurrentList.CurrentSong = item;
-            }
-            else if ((SongType)songType == SongType.Compilation)
-            {
-                var item = context.CompilationSongs.GetById(itemID);
-                PlayerCurrentList.CurrentSong = item;
-            }
-            else if ((SongType)songType == SongType.Deezer)
-            {
-                var item = context.DeezerSongs.GetById(itemID);
-                PlayerCurrentList.CurrentSong = item;
-            }
             this.Play();
         }
-        public void AddSong(int itemID, int songType)
+        public void AddSong(Song item)
         {
-            if ((SongType)songType == SongType.Mediatheque)
-            {
-                var item = context.MediathequeSongs.GetById(itemID);
                 PlayerCurrentList.AddSong(item);
-            }
-            else if ((SongType)songType == SongType.Compilation)
-            {
-                var item = context.CompilationSongs.GetById(itemID);
-                PlayerCurrentList.AddSong(item);
-            }
-            else if ((SongType)songType == SongType.Deezer)
-            {
-                var item = context.DeezerSongs.GetById(itemID);
-                PlayerCurrentList.AddSong(item);
-            }
             if (!Player.Playing) { GetNextSongToPlay();Play(); }
         }
-        public void AddPrioritizeSong(int itemID, int songType)
+        public void AddPrioritizeSong(Song item)
         {
-            if ((SongType)songType == SongType.Mediatheque)
-            {
-                var item = context.MediathequeSongs.GetById(itemID);
                 PlayerCurrentList.AddPrioritizeSong(item);
-            }
-            else if ((SongType)songType == SongType.Compilation)
-            {
-                var item = context.CompilationSongs.GetById(itemID);
-                PlayerCurrentList.AddPrioritizeSong(item);
-            }
-            else if ((SongType)songType == SongType.Deezer)
-            {
-                var item = context.DeezerSongs.GetById(itemID);
-                PlayerCurrentList.AddPrioritizeSong(item);
-            }
             if (PlayerCurrentList.IsEmpty) { this.Play(); }
         }
         public void GetNextSongToPlay()

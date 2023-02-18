@@ -5,9 +5,9 @@ namespace FPIMusic.Services.Player
 {
     public interface IPlayerService
     {
-        void PlaySong(int itemID, int songType);
-        void AddPrioritizeSong(int itemID, int songType);
-        void AddSong(int itemID, int songType);
+        void PlaySong(Song item);
+        void AddPrioritizeSong(Song item);
+        void AddSong(Song item);
         void GetNextSongToPlay();
         PlayerListStatus GetPlayerListStatus();
         void GetPreviousSongToPlay();

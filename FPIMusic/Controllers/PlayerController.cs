@@ -1,4 +1,6 @@
-﻿using FPIMusic.Models.Mediatheque;
+﻿using FPIMusic.DataAccess;
+using FPIMusic.Models;
+using FPIMusic.Models.Mediatheque;
 using FPIMusic.Models.Player;
 using FPIMusic.Services;
 using FPIMusic.Services.Player;
@@ -12,26 +14,44 @@ namespace FPIMusic.Controllers
     public class PlayerController : ControllerBase
     {
         private readonly IPlayerService _playerService;
-        public PlayerController(IPlayerService playerService)
+        private readonly IRepoUnit _contextService;
+        public PlayerController(IPlayerService playerService, IRepoUnit contextService)
         {
             _playerService = playerService;
+            _contextService = contextService;
+        }
+        private Song GetSong(int id, int songType)
+        {
+            if ((SongType)songType == SongType.Mediatheque)
+            {
+                return _contextService.MediathequeSongs.GetById(id);
+            }
+            else if ((SongType)songType == SongType.Compilation)
+            {
+                return _contextService.CompilationSongs.GetById(id);
+            }
+            else if ((SongType)songType == SongType.Deezer)
+            {
+                return _contextService.DeezerSongs.GetById(id);
+            }
+            else return null;
         }
         [HttpGet("PlaySong/{id}/{songType}")]
         public async Task<ActionResult> PlaySong(int id, int songType)
-        {
-            _playerService.PlaySong(id, songType);
+        {            
+            _playerService.PlaySong(GetSong(id, songType));
             return Ok();
         }
         [HttpGet("AddSong/{id}/{songType}")]
         public async Task<ActionResult> AddSong(int id, int songType)
         {
-            _playerService.AddSong(id, songType);
+            _playerService.AddSong(GetSong(id, songType));
             return Ok();
         }
         [HttpGet("AddPrioritizeSong/{id}/{songType}")]
         public async Task<ActionResult> AddPrioritizeSong(int id, int songType)
         {
-            _playerService.AddPrioritizeSong(id, songType);
+            _playerService.AddPrioritizeSong(GetSong(id, songType));
             return Ok();
         }
         [HttpGet("Next")]
