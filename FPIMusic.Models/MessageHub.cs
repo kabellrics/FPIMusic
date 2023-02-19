@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FPIMusic.Services.Hub
+namespace FPIMusic.Models
 {
     public class MessageHub : Microsoft.AspNetCore.SignalR.Hub //Hub<IMessageHubClient>
     {

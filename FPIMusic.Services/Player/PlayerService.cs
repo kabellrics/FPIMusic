@@ -19,102 +19,110 @@ namespace FPIMusic.Services.Player
         //private IRepoUnit context;
         private PlayerCurrentList PlayerCurrentList;
         private NetCoreAudio.Player Player;
-        private IHubContext<MessageHub, IMessageHubClient> messageHub;
-        public PlayerService(/*IRepoUnit context,*/ IHubContext<MessageHub, IMessageHubClient> _messageHub)
+        private IHubContext<Models.MessageHub> messageHub;
+        public PlayerService(/*IRepoUnit context,*/ IHubContext<Models.MessageHub> _messageHub)
         {
             //this.context = context;
             messageHub = _messageHub;
-            PlayerCurrentList = new PlayerCurrentList();
+            this.PlayerCurrentList = PlayerCurrentList.Instance;
             Player = new NetCoreAudio.Player();
             Player.PlaybackFinished += Player_PlaybackFinished;
         }
 
         private void Player_PlaybackFinished(object? sender, EventArgs e)
         {
-            PlayerCurrentList.SongFinishedPlay();
+            this.PlayerCurrentList.SongFinishedPlay();
             GetNextSongToPlay();
             this.Play();
         }
         private void Player_SongFinished()
         {
-            PlayerCurrentList.SongFinishedPlay();
+            this.PlayerCurrentList.SongFinishedPlay();
             GetNextSongToPlay();
             this.Play();
         }
 
         public PlayerListStatus GetPlayerListStatus()
         {
-            var status = PlayerCurrentList.GetPlayerListStatus();
-            status.Pausing = Player.Paused;
-            status.Playing= Player.Playing;
+            var status = this.PlayerCurrentList.GetPlayerListStatus();
+            status.Pausing = this.PlayerCurrentList.Paused;
+            status.Playing= this.PlayerCurrentList.Playing;
             return status;
         }
         public void PlaySong(Song item)
         {
-            PlayerCurrentList.ReInit();
-                PlayerCurrentList.CurrentSong = item;
+            this.PlayerCurrentList.Stop();
+            this.PlayerCurrentList.ReInit();
+            //this.Player = new NetCoreAudio.Player();
+            this.PlayerCurrentList.CurrentSong = item;
             this.Play();
         }
         public void AddSong(Song item)
         {
-                PlayerCurrentList.AddSong(item);
-            if (!Player.Playing) { GetNextSongToPlay();Play(); }
+            this.PlayerCurrentList.AddSong(item);
+            if (this.PlayerCurrentList.Playing) { GetNextSongToPlay();Play(); }
         }
         public void AddPrioritizeSong(Song item)
         {
-                PlayerCurrentList.AddPrioritizeSong(item);
-            if (PlayerCurrentList.IsEmpty) { this.Play(); }
+            this.PlayerCurrentList.AddPrioritizeSong(item);
+            if (this.PlayerCurrentList.IsEmpty) { this.Play(); }
         }
         public void GetNextSongToPlay()
         {
-            PlayerCurrentList.SongFinishedPlay();
-            PlayerCurrentList.GetNextSongToPlay();
+            this.PlayerCurrentList.SongFinishedPlay();
+            this.PlayerCurrentList.GetNextSongToPlay();
             //Play();
         }
         public void GetPreviousSongToPlay()
         {
-            PlayerCurrentList.GetPreviousSongToPlay();
+            this.PlayerCurrentList.GetPreviousSongToPlay();
             //Play();
         }
         public void Play(Song song = null) 
         {
-            var currentsong = song;
-            if (currentsong == null)
-                currentsong = PlayerCurrentList.CurrentSong;
+            this.PlayerCurrentList.Play();
+            //var currentsong = song;
+            //if (currentsong == null)
+            //    currentsong = PlayerCurrentList.CurrentSong;
 
-            if (currentsong != null)
-            {
-                var songduration = TagLib.File.Create(currentsong.Path).Properties.Duration;
-                if (song != null)
-                    Player.Play(song.Path);
-                else
-                    Player.Play(PlayerCurrentList.CurrentSong.Path);
-                messageHub.Clients.All.SendSynchroToClient("Synchro");
+            //if (currentsong != null)
+            //{
+            //    var songduration = TagLib.File.Create(currentsong.Path).Properties.Duration;
+            //    if (song != null)
+            //        Player.Play(song.Path);
+            //    else
+            //        Player.Play(PlayerCurrentList.CurrentSong.Path);
+                messageHub.Clients.All.SendAsync("Synchro","Play");
                 //Watch.Restart();
-            }
+            //}
         }
-        public void Pause() { Player.Pause();
-            messageHub.Clients.All.SendSynchroToClient("Synchro");
+        public void Pause() {
+
+            this.PlayerCurrentList.Pause();
+            messageHub.Clients.All.SendAsync("Synchro", "Pause");
         }
         public void Resume() {
-            if (Player.Paused)
-            {
-                Player.Resume();
-                messageHub.Clients.All.SendSynchroToClient("Synchro");
-            }
-            else
-            {
-                this.Play();
-            }
+            this.PlayerCurrentList.Resume();
+            //if (Player.Paused)
+            //{
+            //    Player.Resume();
+                messageHub.Clients.All.SendAsync("Synchro", "Resume");
+            //}
+            //else
+            //{
+            //    this.Play();
+            //}
         }
-        public void Stop() { Player.Stop();
-            messageHub.Clients.All.SendSynchroToClient("Synchro");
+        public void Stop() {
+            this.PlayerCurrentList.Stop();
+            messageHub.Clients.All.SendAsync("Synchro", "Stop");
         }
-        public void SetVolume(byte volume) { Player.SetVolume(volume); }
+        public void SetVolume(byte volume) { PlayerCurrentList.SetVolume(volume); }
         public void Schuffle()
         {
-            PlayerCurrentList.IsShuffle = !PlayerCurrentList.IsShuffle;
-            messageHub.Clients.All.SendSynchroToClient("Synchro");
+            this.PlayerCurrentList.Schuffle();
+            //PlayerCurrentList.IsShuffle = !PlayerCurrentList.IsShuffle;
+            messageHub.Clients.All.SendAsync("Synchro", "Schuffle");
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,12 +11,28 @@ namespace FPIMusic.Models.Player
 {
     public class PlayerCurrentList
     {
+        private static PlayerCurrentList instance = null;
+        private static readonly object padlock = new object();
+
         private Queue<Song> SongToPlay;
         private Queue<Song> ShuffleSongToPlay;
         private Stack<Song> SongPrioritizetoPlay;
         private List<Song> SongAlreadyPlay;
         private List<Song> ShuffleSongAlreadyPlay;
+        private NetCoreAudio.Player Player;
         public Song CurrentSong { get; set; }
+        private bool _Paused;
+        public bool Paused
+        {
+            get { return Player.Paused; }
+            //set { _Paused = value; SetShuffleValue(); }
+        }
+        private bool _Playing;
+        public bool Playing
+        {
+            get { return Player.Playing; }
+            //set { _Paused = value; SetShuffleValue(); }
+        }
         private bool _IsShuffle;
         public bool IsShuffle
         {
@@ -25,11 +43,31 @@ namespace FPIMusic.Models.Player
         {
             get { return (!SongPrioritizetoPlay.Any() && !SongToPlay.Any()); }
         }
+        public static PlayerCurrentList Instance
+        {
+            get
+            {
+                lock (padlock)
+                {
+                    if (instance == null)
+                    {
+                        instance = new PlayerCurrentList();
+                    }
+                    return instance;
+                }
+            }
+        }
 
-
-        public PlayerCurrentList()
+        private PlayerCurrentList()
         {
             ReInit();
+            Player.PlaybackFinished += Player_PlaybackFinished;
+        }
+        private void Player_PlaybackFinished(object? sender, EventArgs e)
+        {
+            this.SongFinishedPlay();
+            GetNextSongToPlay();
+            this.Play();
         }
         public void ReInit()
         {
@@ -40,6 +78,16 @@ namespace FPIMusic.Models.Player
             SongAlreadyPlay = new List<Song>();
             ShuffleSongAlreadyPlay = new List<Song>();
             CurrentSong = null;
+            Player = new NetCoreAudio.Player();
+        }
+        public void Play()
+        {
+            if (CurrentSong != null)
+            {
+                Player.Stop();
+                    Player.Play(CurrentSong.Path);
+                //Watch.Restart();
+            }
         }
         private void SetShuffleValue()
         {
@@ -101,6 +149,30 @@ namespace FPIMusic.Models.Player
         public void AddPrioritizeSong(Song item)
         {
             SongPrioritizetoPlay.Push(item);
+        }
+        public void Pause()
+        {
+            Player.Pause();
+        }
+        public void Resume()
+        {
+            if (Player.Paused)
+            {
+                Player.Resume();
+            }
+            else
+            {
+                this.Play();
+            }
+        }
+        public void Stop()
+        {
+            Player.Stop();
+        }
+        public void SetVolume(byte volume) { Player.SetVolume(volume); }
+        public void Schuffle()
+        {
+            IsShuffle = !IsShuffle;
         }
         public void SongFinishedPlay()
         {

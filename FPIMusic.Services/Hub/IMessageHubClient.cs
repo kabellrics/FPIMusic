@@ -9,5 +9,6 @@ namespace FPIMusic.Services.Hub
     public interface IMessageHubClient
     {
         Task SendSynchroToClient(String message);
+        Task SendAsync(string user, string message);
     }
 }
