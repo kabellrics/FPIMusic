@@ -57,13 +57,13 @@ namespace FPIMusic.Controllers
         [HttpGet("Next")]
         public async Task<ActionResult> Next()
         {
-            _playerService.GetNextSongToPlay();
+            _playerService.NextSong();
             return Ok();
         }
         [HttpGet("Previous")]
         public async Task<ActionResult> Previous()
         {
-            _playerService.GetPreviousSongToPlay();
+            _playerService.PreviousSong();
             return Ok();
         }
         [HttpGet("Play")]
@@ -82,6 +82,12 @@ namespace FPIMusic.Controllers
         public async Task<ActionResult> Stop()
         {
             _playerService.Stop();
+            return Ok();
+        }
+        [HttpGet("Volume/{volume}")]
+        public async Task<ActionResult> Volume(int volume)
+        {
+            _playerService.SetVolume(volume);
             return Ok();
         }
         [HttpGet("Status")]

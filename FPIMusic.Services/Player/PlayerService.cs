@@ -3,6 +3,7 @@ using FPIMusic.Models;
 using FPIMusic.Models.Player;
 using FPIMusic.Services.Hub;
 using FPIMusic.Services.Settings;
+using LibVLCSharp.Shared;
 using Microsoft.AspNetCore.SignalR;
 using NetCoreAudio;
 using System;
@@ -18,22 +19,28 @@ namespace FPIMusic.Services.Player
     {
         //private IRepoUnit context;
         private PlayerCurrentList PlayerCurrentList;
-        private NetCoreAudio.Player Player;
         private IHubContext<Models.MessageHub> messageHub;
-        public PlayerService(/*IRepoUnit context,*/ IHubContext<Models.MessageHub> _messageHub)
+        LibVLC libvlc;
+        MediaPlayer mediaPlayer;
+        public PlayerService( IHubContext<Models.MessageHub> _messageHub)
         {
             //this.context = context;
             messageHub = _messageHub;
-            this.PlayerCurrentList = PlayerCurrentList.Instance;
-            Player = new NetCoreAudio.Player();
-            Player.PlaybackFinished += Player_PlaybackFinished;
+            this.PlayerCurrentList = new PlayerCurrentList();
+            libvlc = new LibVLC(enableDebugLogs:true);
+            mediaPlayer = new MediaPlayer(libvlc);
+            mediaPlayer.EndReached += MediaPlayer_EndReached;
+        }
+
+        private void MediaPlayer_EndReached(object? sender, EventArgs e)
+        {
+            ThreadPool.QueueUserWorkItem(_=> Player_SongFinished());
+            
         }
 
         private void Player_PlaybackFinished(object? sender, EventArgs e)
         {
-            this.PlayerCurrentList.SongFinishedPlay();
-            GetNextSongToPlay();
-            this.Play();
+            Player_SongFinished();
         }
         private void Player_SongFinished()
         {
@@ -45,22 +52,29 @@ namespace FPIMusic.Services.Player
         public PlayerListStatus GetPlayerListStatus()
         {
             var status = this.PlayerCurrentList.GetPlayerListStatus();
-            status.Pausing = this.PlayerCurrentList.Paused;
-            status.Playing= this.PlayerCurrentList.Playing;
+            status.Pausing = !mediaPlayer.IsPlaying;
+            status.Playing= mediaPlayer.IsPlaying;
+            status.Volume= mediaPlayer.Volume;
             return status;
         }
         public void PlaySong(Song item)
         {
-            this.PlayerCurrentList.Stop();
             this.PlayerCurrentList.ReInit();
-            //this.Player = new NetCoreAudio.Player();
             this.PlayerCurrentList.CurrentSong = item;
             this.Play();
         }
         public void AddSong(Song item)
         {
-            this.PlayerCurrentList.AddSong(item);
-            if (this.PlayerCurrentList.Playing) { GetNextSongToPlay();Play(); }
+            if (this.PlayerCurrentList.IsEmpty)
+            {
+                this.PlayerCurrentList.AddSong(item);
+                GetNextSongToPlay();
+                Play();
+            }
+            else
+            {
+                this.PlayerCurrentList.AddSong(item);
+            }
         }
         public void AddPrioritizeSong(Song item)
         {
@@ -69,55 +83,62 @@ namespace FPIMusic.Services.Player
         }
         public void GetNextSongToPlay()
         {
-            this.PlayerCurrentList.SongFinishedPlay();
             this.PlayerCurrentList.GetNextSongToPlay();
-            //Play();
         }
         public void GetPreviousSongToPlay()
         {
             this.PlayerCurrentList.GetPreviousSongToPlay();
-            //Play();
+        }
+        public void NextSong()
+        {
+            this.PlayerCurrentList.SongFinishedPlay();
+            this.PlayerCurrentList.GetNextSongToPlay();
+        }
+        public void PreviousSong()
+        {
+            this.PlayerCurrentList.GetPreviousSongToPlay();
         }
         public void Play(Song song = null) 
         {
-            this.PlayerCurrentList.Play();
-            //var currentsong = song;
-            //if (currentsong == null)
-            //    currentsong = PlayerCurrentList.CurrentSong;
+            //this.PlayerCurrentList.Play();
+            try
+            {
+                var currentsong = song;
+                if (currentsong == null)
+                    currentsong = PlayerCurrentList.CurrentSong;
 
-            //if (currentsong != null)
-            //{
-            //    var songduration = TagLib.File.Create(currentsong.Path).Properties.Duration;
-            //    if (song != null)
-            //        Player.Play(song.Path);
-            //    else
-            //        Player.Play(PlayerCurrentList.CurrentSong.Path);
-                messageHub.Clients.All.SendAsync("Synchro","Play");
-                //Watch.Restart();
-            //}
+                if (PlayerCurrentList.CurrentSong != null)
+                {
+                    var media = new Media(libvlc, new Uri(currentsong.Path));
+                    //mediaPlayer.Stop();
+                    mediaPlayer.Play(media);
+                    messageHub.Clients.All.SendAsync("Synchro", "Play"); 
+                }
+            }
+            catch (Exception ex)
+            {
+                //throw;
+            }
         }
         public void Pause() {
 
-            this.PlayerCurrentList.Pause();
+            this.mediaPlayer.Pause();
             messageHub.Clients.All.SendAsync("Synchro", "Pause");
         }
         public void Resume() {
-            this.PlayerCurrentList.Resume();
-            //if (Player.Paused)
-            //{
-            //    Player.Resume();
+            //this.PlayerCurrentList.Resume();
+                this.mediaPlayer.Play();
                 messageHub.Clients.All.SendAsync("Synchro", "Resume");
-            //}
-            //else
-            //{
-            //    this.Play();
-            //}
         }
         public void Stop() {
-            this.PlayerCurrentList.Stop();
+            this.mediaPlayer.Stop();
             messageHub.Clients.All.SendAsync("Synchro", "Stop");
         }
-        public void SetVolume(byte volume) { PlayerCurrentList.SetVolume(volume); }
+        public void SetVolume(int volume)
+        {
+            if(volume>=0 && volume <=100)
+            mediaPlayer.Volume =volume; 
+        }
         public void Schuffle()
         {
             this.PlayerCurrentList.Schuffle();

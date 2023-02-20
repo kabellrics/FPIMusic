@@ -14,7 +14,7 @@ namespace FPIMusic.Services.Player
         void Pause();
         void Play(Song song = null);
         void Resume();
-        void SetVolume(byte volume);
-        void Stop();
+        void SetVolume(int volume);
+        void Stop(); void NextSong(); void PreviousSong();
     }
 }

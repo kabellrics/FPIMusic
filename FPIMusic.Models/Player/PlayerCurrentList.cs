@@ -11,26 +11,26 @@ namespace FPIMusic.Models.Player
 {
     public class PlayerCurrentList
     {
-        private static PlayerCurrentList instance = null;
-        private static readonly object padlock = new object();
+        //private static PlayerCurrentList instance = null;
+        //private static readonly object padlock = new object();
 
         private Queue<Song> SongToPlay;
         private Queue<Song> ShuffleSongToPlay;
         private Stack<Song> SongPrioritizetoPlay;
         private List<Song> SongAlreadyPlay;
         private List<Song> ShuffleSongAlreadyPlay;
-        private NetCoreAudio.Player Player;
+        //private NetCoreAudio.Player Player;
         public Song CurrentSong { get; set; }
         private bool _Paused;
         public bool Paused
         {
-            get { return Player.Paused; }
+            get { return /*Player.Paused;*/false; }
             //set { _Paused = value; SetShuffleValue(); }
         }
         private bool _Playing;
         public bool Playing
         {
-            get { return Player.Playing; }
+            get { return /*Player.Playing;*/false; }
             //set { _Paused = value; SetShuffleValue(); }
         }
         private bool _IsShuffle;
@@ -39,31 +39,41 @@ namespace FPIMusic.Models.Player
             get { return _IsShuffle; }
             set { _IsShuffle = value; SetShuffleValue(); }
         }
+        private bool _IsLooping;
+        public bool IsLooping
+        {
+            get { return _IsLooping; }
+            set { _IsLooping = value; SetShuffleValue(); }
+        }
         public bool IsEmpty
         {
-            get { return (!SongPrioritizetoPlay.Any() && !SongToPlay.Any()); }
+            get { return (!SongPrioritizetoPlay.Any() && !SongToPlay.Any() && CurrentSong == null); }
         }
-        public static PlayerCurrentList Instance
-        {
-            get
-            {
-                lock (padlock)
-                {
-                    if (instance == null)
-                    {
-                        instance = new PlayerCurrentList();
-                    }
-                    return instance;
-                }
-            }
-        }
+        //public static PlayerCurrentList Instance
+        //{
+        //    get
+        //    {
+        //        lock (padlock)
+        //        {
+        //            if (instance == null)
+        //            {
+        //                instance = new PlayerCurrentList();
+        //            }
+        //            return instance;
+        //        }
+        //    }
+        //}
 
-        private PlayerCurrentList()
+        public PlayerCurrentList()
         {
             ReInit();
-            Player.PlaybackFinished += Player_PlaybackFinished;
+            //Player.PlaybackFinished += Player_PlaybackFinished;
         }
         private void Player_PlaybackFinished(object? sender, EventArgs e)
+        {
+            PlaybackFinished();
+        }
+        private void PlaybackFinished()
         {
             this.SongFinishedPlay();
             GetNextSongToPlay();
@@ -78,14 +88,14 @@ namespace FPIMusic.Models.Player
             SongAlreadyPlay = new List<Song>();
             ShuffleSongAlreadyPlay = new List<Song>();
             CurrentSong = null;
-            Player = new NetCoreAudio.Player();
         }
         public void Play()
         {
             if (CurrentSong != null)
             {
-                Player.Stop();
-                    Player.Play(CurrentSong.Path);
+                //Thread.Sleep(60000); PlaybackFinished();
+                //Player.Stop();
+                //    Player.Play(CurrentSong.Path);
                 //Watch.Restart();
             }
         }
@@ -115,6 +125,7 @@ namespace FPIMusic.Models.Player
         {
             var status = new PlayerListStatus();
             status.CurrentSong = CurrentSong;
+            status.IsLooping= IsLooping;
             status.IsShuffle = IsShuffle;
             status.SongAlreadyPlay = IsShuffle ? ShuffleSongAlreadyPlay : SongAlreadyPlay;
             status.SongToPlay = new List<Song>();
@@ -152,24 +163,27 @@ namespace FPIMusic.Models.Player
         }
         public void Pause()
         {
-            Player.Pause();
+            //Player.Pause();
         }
         public void Resume()
         {
-            if (Player.Paused)
-            {
-                Player.Resume();
-            }
-            else
-            {
-                this.Play();
-            }
+            //if (Player.Paused)
+            //{
+            //    Player.Resume();
+            //}
+            //else
+            //{
+            //    this.Play();
+            //}
         }
         public void Stop()
         {
-            Player.Stop();
+            //Player.Stop();
         }
-        public void SetVolume(byte volume) { Player.SetVolume(volume); }
+        public void SetVolume(byte volume)
+        {
+            //Player.SetVolume(volume);
+        }
         public void Schuffle()
         {
             IsShuffle = !IsShuffle;
@@ -190,12 +204,18 @@ namespace FPIMusic.Models.Player
             {
                 if (!IsShuffle)
                 {
-                    CurrentSong = SongToPlay.Dequeue();
+                    if (SongToPlay.Any())
+                        CurrentSong = SongToPlay.Dequeue();
+                    else
+                        CurrentSong = null;
                     //return CurrentSong;
                 }
                 else
                 {
-                    CurrentSong = ShuffleSongToPlay.Dequeue();
+                    if (ShuffleSongToPlay.Any())
+                        CurrentSong = ShuffleSongToPlay.Dequeue();
+                    else
+                        CurrentSong = null;
                     //return CurrentSong;
                 }
             }
@@ -235,6 +255,8 @@ namespace FPIMusic.Models.Player
         public bool Playing { get; set; }
         public bool Pausing { get; set; }
         public bool IsShuffle { get; set; }
+        public bool IsLooping { get; set; }
+        public int Volume { get; set; }
 
     }
 }

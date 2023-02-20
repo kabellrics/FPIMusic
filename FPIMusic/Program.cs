@@ -55,7 +55,13 @@ app.Use(async (context, next) =>
 app.UseCors(AllowAllHeadersPolicy);
 app.UseStaticFiles();
 app.UseAuthorization();
-app.MapHub<MessageHub>("/synchro");
+//app.MapHub<MessageHub>("/synchro");
+app.UseRouting();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<MessageHub>("/synchro");
+});
 
 app.MapControllers();
 
