@@ -9,10 +9,11 @@ namespace FPIMusic.Models
 {
     public class MessageHub : Microsoft.AspNetCore.SignalR.Hub //Hub<IMessageHubClient>
     {
-        //public async Task SendSynchroToClient(String message)
-        //{
-        //    await Clients.All.SendSynchroToClient(message);
-        //}
+        public override async Task OnConnectedAsync()
+        {
+            await this.SendMessage("Sync");
+            await base.OnConnectedAsync();
+        }
         public async Task SendMessage(string message)
         => await Clients.All.SendAsync("Synchro", message);
     }

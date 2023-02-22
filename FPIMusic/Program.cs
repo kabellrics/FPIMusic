@@ -1,9 +1,10 @@
 using FPIMusic;
 using FPIMusic.DataAccess;
+using FPIMusic.Models;
 using FPIMusic.Services;
-using FPIMusic.Services.Hub;
 using FPIMusic.Services.Player;
 using FPIMusic.Services.Settings;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,11 +58,17 @@ app.UseStaticFiles();
 app.UseAuthorization();
 //app.MapHub<MessageHub>("/synchro");
 app.UseRouting();
-
-app.UseEndpoints(endpoints =>
+app.MapHub<MessageHub>("/synchro", options =>
 {
-    endpoints.MapHub<MessageHub>("/synchro");
+    options.Transports = HttpTransportType.LongPolling;
 });
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapHub<MessageHub>("/synchro", options =>
+//    {
+//        options.Transports = HttpTransportType.LongPolling;
+//    });
+//});
 
 app.MapControllers();
 

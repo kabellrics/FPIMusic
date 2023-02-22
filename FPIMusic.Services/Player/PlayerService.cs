@@ -1,7 +1,6 @@
 ﻿using FPIMusic.DataAccess;
 using FPIMusic.Models;
 using FPIMusic.Models.Player;
-using FPIMusic.Services.Hub;
 using FPIMusic.Services.Settings;
 using LibVLCSharp.Shared;
 using Microsoft.AspNetCore.SignalR;
@@ -137,7 +136,8 @@ namespace FPIMusic.Services.Player
         public void SetVolume(int volume)
         {
             if(volume>=0 && volume <=100)
-            mediaPlayer.Volume =volume; 
+            mediaPlayer.Volume =volume;
+            messageHub.Clients.All.SendAsync("Synchro", "Volume");
         }
         public void Schuffle()
         {
