@@ -45,10 +45,12 @@ namespace FPIMusic.DataAccess
         public void Remove(T entity)
         {
             _context.Set<T>().Remove(entity);
+            _context.SaveChanges();
         }
         public void RemoveRange(IEnumerable<T> entities)
         {
             _context.Set<T>().RemoveRange(entities);
+            _context.SaveChanges();
         }
     }
 }

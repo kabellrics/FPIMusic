@@ -92,10 +92,12 @@ namespace FPIMusic.Services.Player
         {
             this.PlayerCurrentList.SongFinishedPlay();
             this.PlayerCurrentList.GetNextSongToPlay();
+            this.Play();
         }
         public void PreviousSong()
         {
             this.PlayerCurrentList.GetPreviousSongToPlay();
+            this.Play();
         }
         public void Play(Song song = null) 
         {
